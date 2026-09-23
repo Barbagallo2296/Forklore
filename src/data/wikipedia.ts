@@ -1,0 +1,36 @@
+export type WikipediaSummary = {
+  title: string;
+  extract: string;
+  thumbnail?: {
+    source: string;
+    width: number;
+    height: number;
+  };
+};
+
+export async function fetchWikipediaSummary(
+  titoloPagina: string,
+): Promise<WikipediaSummary> {
+  const url = `https://it.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
+    titoloPagina,
+  )}`;
+
+  const response = await fetch(url, {
+    headers: {
+      'User-Agent': 'Forklore/1.0 (progetto scolastico ITS Prodigi)',
+      Accept: 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Errore nel recupero della pagina: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  return {
+    title: data.title,
+    extract: data.extract,
+    thumbnail: data.thumbnail,
+  };
+}
