@@ -1,3 +1,6 @@
+export const WIKIPEDIA_USER_AGENT =
+  'Forklore/1.0 (progetto scolastico ITS Prodigi; https://github.com/Barbagallo2296/Forklore)';
+
 export type WikipediaSummary = {
   title: string;
   extract: string;
@@ -17,7 +20,7 @@ export async function fetchWikipediaSummary(
 
   const response = await fetch(url, {
     headers: {
-      'User-Agent': 'Forklore/1.0 (progetto scolastico ITS Prodigi)',
+      'User-Agent': WIKIPEDIA_USER_AGENT,
       Accept: 'application/json',
     },
   });
