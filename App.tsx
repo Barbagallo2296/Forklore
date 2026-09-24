@@ -1,13 +1,16 @@
 import React from 'react';
-import AppNavigator from './src/navigation/AppNavigator';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from './src/theme/ThemeContext';
+import AppNavigator from './src/navigation/AppNavigator';
 
 const queryClient = new QueryClient();
 
 export default function App() {
- return (
+  return (
     <QueryClientProvider client={queryClient}>
-      <AppNavigator />
+      <ThemeProvider>
+        <AppNavigator />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

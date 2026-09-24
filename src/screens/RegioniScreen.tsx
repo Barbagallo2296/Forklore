@@ -2,31 +2,33 @@ import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ChevronRight } from 'lucide-react-native';
 import { REGIONI } from '../data/regioni';
+import { useTheme } from '../theme/ThemeContext';
 import type { RegioniStackParamList } from '../navigation/AppNavigator';
 
 type NavigationProp = NativeStackNavigationProp<RegioniStackParamList, 'Regioni'>;
 
-
-const COLORI = [
+const COLORI_AVATAR = [
   '#E07A5F', '#3D5A80', '#81B29A', '#F2CC8F', '#BC6C25',
   '#606C38', '#9C6644', '#457B9D', '#D62828', '#6A4C93',
 ];
 
 export default function RegioniScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const { colors } = useTheme();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
         data={REGIONI}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         renderItem={({ item, index }) => {
-          const colore = COLORI[index % COLORI.length];
+          const colore = COLORI_AVATAR[index % COLORI_AVATAR.length];
           return (
             <TouchableOpacity
-              style={styles.card}
+              style={[styles.card, { backgroundColor: colors.card }]}
               activeOpacity={0.6}
               onPress={() => navigation.navigate('PiattiRegione', { regioneId: item.id })}
             >
@@ -34,12 +36,14 @@ export default function RegioniScreen() {
                 <Text style={styles.avatarLettera}>{item.nome.charAt(0)}</Text>
               </View>
               <View style={styles.cardTextWrap}>
-                <Text style={styles.nomeRegione}>{item.nome}</Text>
-                <Text style={styles.sottotitolo}>
+                <Text style={[styles.nomeRegione, { color: colors.textPrimary }]}>
+                  {item.nome}
+                </Text>
+                <Text style={[styles.sottotitolo, { color: colors.textSecondary }]}>
                   {item.piatti.length} piatti tipici
                 </Text>
               </View>
-              <Text style={styles.freccia}>›</Text>
+              <ChevronRight color={colors.chevron} size={22} />
             </TouchableOpacity>
           );
         }}
@@ -51,7 +55,6 @@ export default function RegioniScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   listContent: {
     padding: 12,
@@ -59,7 +62,6 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
     borderRadius: 14,
     paddingVertical: 14,
     paddingHorizontal: 14,
@@ -89,18 +91,10 @@ const styles = StyleSheet.create({
   nomeRegione: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#1a1a1a',
     letterSpacing: 0.2,
   },
   sottotitolo: {
     fontSize: 13,
-    color: '#888',
     marginTop: 2,
-  },
-  freccia: {
-    fontSize: 26,
-    color: '#c0c0c0',
-    fontWeight: '300',
-    marginLeft: 4,
   },
 });

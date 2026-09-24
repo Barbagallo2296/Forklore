@@ -1,19 +1,13 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  ActivityIndicator,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+  View, Text,Image, ScrollView,ActivityIndicator,TouchableOpacity, StyleSheet,} from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { Heart } from 'lucide-react-native';
 import { fetchWikipediaSummary, WIKIPEDIA_USER_AGENT } from '../data/wikipedia';
 import { isPreferito, toggleFavorito } from '../data/preferiti';
+import { useTheme } from '../theme/ThemeContext';
 import type { RegioniStackParamList } from '../navigation/AppNavigator';
 
 type RoutePropType = RouteProp<RegioniStackParamList, 'DettaglioPiatto'>;
@@ -21,6 +15,7 @@ type RoutePropType = RouteProp<RegioniStackParamList, 'DettaglioPiatto'>;
 export default function DettaglioPiattoScreen() {
   const route = useRoute<RoutePropType>();
   const { piattoNome } = route.params;
+  const { colors } = useTheme();
 
   const [preferito, setPreferito] = useState(() => isPreferito(piattoNome));
 
@@ -36,18 +31,20 @@ export default function DettaglioPiattoScreen() {
 
   if (isLoading) {
     return (
-      <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#E07A5F" />
-        <Text style={styles.loadingText}>Sto recuperando le informazioni...</Text>
+      <View style={[styles.centerContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+          Sto recuperando le informazioni...
+        </Text>
       </View>
     );
   }
 
   if (isError || !data) {
     return (
-      <View style={styles.centerContainer}>
+      <View style={[styles.centerContainer, { backgroundColor: colors.background }]}>
         <Text style={styles.errorEmoji}>😕</Text>
-        <Text style={styles.errorText}>
+        <Text style={[styles.errorText, { color: colors.textSecondary }]}>
           Non è stato possibile caricare le informazioni su questo piatto.
         </Text>
       </View>
@@ -55,7 +52,10 @@ export default function DettaglioPiattoScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+    <ScrollView
+      style={[styles.container, { backgroundColor: colors.background }]}
+      contentContainerStyle={styles.scrollContent}
+    >
       <View style={styles.imageWrapper}>
         {data.thumbnail ? (
           <Image
@@ -66,24 +66,28 @@ export default function DettaglioPiattoScreen() {
             style={styles.image}
           />
         ) : (
-          <View style={styles.imagePlaceholder}>
+          <View style={[styles.imagePlaceholder, { backgroundColor: colors.placeholder }]}>
             <Text style={styles.imagePlaceholderEmoji}>🍽️</Text>
           </View>
         )}
 
-        <TouchableOpacity style={styles.cuoreButton} onPress={handleToggle} activeOpacity={0.7}>
+        <TouchableOpacity
+          style={[styles.cuoreButton, { backgroundColor: colors.card }]}
+          onPress={handleToggle}
+          activeOpacity={0.7}
+        >
           <Heart
             size={20}
-            color="#E07A5F"
-            fill={preferito ? '#E07A5F' : 'transparent'}
+            color={colors.primary}
+            fill={preferito ? colors.primary : 'transparent'}
           />
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.titolo}>{data.title}</Text>
-      <View style={styles.divider} />
-      <Text style={styles.testo}>{data.extract}</Text>
-      <Text style={styles.fonte}>Fonte: Wikipedia</Text>
+      <Text style={[styles.titolo, { color: colors.textPrimary }]}>{data.title}</Text>
+      <View style={[styles.divider, { backgroundColor: colors.primary }]} />
+      <Text style={[styles.testo, { color: colors.textPrimary }]}>{data.extract}</Text>
+      <Text style={[styles.fonte, { color: colors.textTertiary }]}>Fonte: Wikipedia</Text>
     </ScrollView>
   );
 }
@@ -91,7 +95,6 @@ export default function DettaglioPiattoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   scrollContent: {
     alignItems: 'center',
@@ -102,12 +105,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
-    backgroundColor: '#ffffff',
   },
   loadingText: {
     marginTop: 12,
     fontSize: 14,
-    color: '#888',
   },
   errorEmoji: {
     fontSize: 40,
@@ -115,7 +116,6 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 15,
-    color: '#888',
     textAlign: 'center',
   },
   imageWrapper: {
@@ -130,7 +130,6 @@ const styles = StyleSheet.create({
     width: 280,
     height: 200,
     borderRadius: 20,
-    backgroundColor: '#e8e0d8',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -141,7 +140,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     right: 10,
-    backgroundColor: '#ffffff',
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -156,7 +154,6 @@ const styles = StyleSheet.create({
   titolo: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#1a1a1a',
     textAlign: 'center',
     letterSpacing: 0.2,
   },
@@ -164,20 +161,17 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#E07A5F',
     marginTop: 12,
     marginBottom: 18,
   },
   testo: {
     fontSize: 16,
     lineHeight: 25,
-    color: '#333333',
     textAlign: 'center',
   },
   fonte: {
     marginTop: 24,
     fontSize: 12,
-    color: '#aaa',
     fontStyle: 'italic',
   },
 });

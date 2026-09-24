@@ -2,8 +2,10 @@ import React, { useCallback, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ChevronRight } from 'lucide-react-native';
 import { REGIONI } from '../data/regioni';
 import { getPreferiti } from '../data/preferiti';
+import { useTheme } from '../theme/ThemeContext';
 import type { PreferitiStackParamList } from '../navigation/AppNavigator';
 
 type NavigationProp = NativeStackNavigationProp<PreferitiStackParamList, 'DettaglioPiatto'>;
@@ -19,6 +21,7 @@ const TUTTI_I_PIATTI = Array.from(
 export default function PreferitiScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [preferiti, setPreferiti] = useState<string[]>([]);
+  const { colors } = useTheme();
 
   useFocusEffect(
     useCallback(() => {
@@ -30,9 +33,9 @@ export default function PreferitiScreen() {
 
   if (piattiPreferiti.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
+      <View style={[styles.emptyContainer, { backgroundColor: colors.background }]}>
         <Text style={styles.emptyEmoji}>🤍</Text>
-        <Text style={styles.emptyText}>
+        <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
           Non hai ancora salvato nessun piatto tra i preferiti.
         </Text>
       </View>
@@ -40,24 +43,28 @@ export default function PreferitiScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
         data={piattiPreferiti}
         keyExtractor={(item) => item.nome}
         contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={styles.card}
+            style={[styles.card, { backgroundColor: colors.card }]}
             activeOpacity={0.6}
             onPress={() =>
               navigation.navigate('DettaglioPiatto', { piattoNome: item.nome })
             }
           >
             <View>
-              <Text style={styles.nomePiatto}>{item.nome}</Text>
-              <Text style={styles.regionePiatto}>{item.regione}</Text>
+              <Text style={[styles.nomePiatto, { color: colors.textPrimary }]}>
+                {item.nome}
+              </Text>
+              <Text style={[styles.regionePiatto, { color: colors.textSecondary }]}>
+                {item.regione}
+              </Text>
             </View>
-            <Text style={styles.freccia}>›</Text>
+            <ChevronRight color={colors.chevron} size={22} />
           </TouchableOpacity>
         )}
       />
@@ -68,7 +75,6 @@ export default function PreferitiScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   listContent: {
     padding: 12,
@@ -78,7 +84,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
-    backgroundColor: '#f5f5f5',
   },
   emptyEmoji: {
     fontSize: 40,
@@ -86,14 +91,12 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 15,
-    color: '#888',
     textAlign: 'center',
   },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#ffffff',
     borderRadius: 14,
     paddingVertical: 16,
     paddingHorizontal: 16,
@@ -107,16 +110,9 @@ const styles = StyleSheet.create({
   nomePiatto: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1a1a1a',
   },
   regionePiatto: {
     fontSize: 13,
-    color: '#888',
     marginTop: 2,
-  },
-  freccia: {
-    fontSize: 26,
-    color: '#c0c0c0',
-    fontWeight: '300',
   },
 });

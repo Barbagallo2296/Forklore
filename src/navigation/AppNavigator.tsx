@@ -1,14 +1,15 @@
 import React from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MapPin, Heart } from 'lucide-react-native';
+import { MapPin, Heart, Sun, Moon } from 'lucide-react-native';
 
 import RegioniScreen from '../screens/RegioniScreen';
 import PiattiRegioneScreen from '../screens/PiattiRegioneScreen';
 import DettaglioPiattoScreen from '../screens/DettaglioPiattoScreen';
 import PreferitiScreen from '../screens/PreferitiScreen';
+import { useTheme } from '../theme/ThemeContext';
 
 type DettaglioParams = { piattoNome: string };
 
@@ -27,15 +28,30 @@ const RegioniStack = createNativeStackNavigator<RegioniStackParamList>();
 const PreferitiStack = createNativeStackNavigator<PreferitiStackParamList>();
 const Tab = createBottomTabNavigator();
 
-const headerOptions = {
-  headerStyle: { backgroundColor: '#E07A5F' },
-  headerTintColor: '#ffffff',
-  headerTitleStyle: { fontWeight: '700' as const },
-};
+function ThemeToggleButton() {
+  const { mode, toggleTheme } = useTheme();
+  return (
+    <TouchableOpacity onPress={toggleTheme} style={{ marginRight: 12 }}>
+      {mode === 'light' ? (
+        <Moon color="#ffffff" size={22} />
+      ) : (
+        <Sun color="#ffffff" size={22} />
+      )}
+    </TouchableOpacity>
+  );
+}
 
 function RegioniStackNavigator() {
+  const { colors } = useTheme();
   return (
-    <RegioniStack.Navigator screenOptions={headerOptions}>
+    <RegioniStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.primary },
+        headerTintColor: '#ffffff',
+        headerTitleStyle: { fontWeight: '700' },
+        headerRight: () => <ThemeToggleButton />,
+      }}
+    >
       <RegioniStack.Screen
         name="Regioni"
         component={RegioniScreen}
@@ -56,8 +72,16 @@ function RegioniStackNavigator() {
 }
 
 function PreferitiStackNavigator() {
+  const { colors } = useTheme();
   return (
-    <PreferitiStack.Navigator screenOptions={headerOptions}>
+    <PreferitiStack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.primary },
+        headerTintColor: '#ffffff',
+        headerTitleStyle: { fontWeight: '700' },
+        headerRight: () => <ThemeToggleButton />,
+      }}
+    >
       <PreferitiStack.Screen
         name="Preferiti"
         component={PreferitiScreen}
@@ -73,16 +97,18 @@ function PreferitiStackNavigator() {
 }
 
 export default function AppNavigator() {
+  const { colors } = useTheme();
   return (
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={{
-          tabBarActiveTintColor: '#E07A5F',
+          tabBarActiveTintColor: colors.primary,
           tabBarInactiveTintColor: '#999999',
+          tabBarStyle: { backgroundColor: colors.card },
           tabBarButton: (props) => (
             <Pressable
               {...props}
-              android_ripple={{ color: '#E07A5F33', borderless: false }}
+              android_ripple={{ color: colors.primaryLight, borderless: false }}
             />
           ),
         }}
