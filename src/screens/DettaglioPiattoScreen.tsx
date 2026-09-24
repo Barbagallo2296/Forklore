@@ -11,6 +11,7 @@ import {
 import { useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
+import { Heart } from 'lucide-react-native';
 import { fetchWikipediaSummary, WIKIPEDIA_USER_AGENT } from '../data/wikipedia';
 import { isPreferito, toggleFavorito } from '../data/preferiti';
 import type { RegioniStackParamList } from '../navigation/AppNavigator';
@@ -71,7 +72,11 @@ export default function DettaglioPiattoScreen() {
         )}
 
         <TouchableOpacity style={styles.cuoreButton} onPress={handleToggle} activeOpacity={0.7}>
-          <Text style={styles.cuoreIcona}>{preferito ? '❤️' : '🤍'}</Text>
+          <Heart
+            size={20}
+            color="#E07A5F"
+            fill={preferito ? '#E07A5F' : 'transparent'}
+          />
         </TouchableOpacity>
       </View>
 
@@ -147,9 +152,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 3,
     elevation: 3,
-  },
-  cuoreIcona: {
-    fontSize: 18,
   },
   titolo: {
     fontSize: 24,

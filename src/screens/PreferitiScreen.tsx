@@ -4,12 +4,16 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { REGIONI } from '../data/regioni';
 import { getPreferiti } from '../data/preferiti';
-import type { RegioniStackParamList } from '../navigation/AppNavigator';
+import type { PreferitiStackParamList } from '../navigation/AppNavigator';
 
-type NavigationProp = NativeStackNavigationProp<RegioniStackParamList, 'DettaglioPiatto'>;
+type NavigationProp = NativeStackNavigationProp<PreferitiStackParamList, 'DettaglioPiatto'>;
 
-const TUTTI_I_PIATTI = REGIONI.flatMap((regione) =>
-  regione.piatti.map((piatto) => ({ nome: piatto.nome, regione: regione.nome })),
+const TUTTI_I_PIATTI = Array.from(
+  new Map(
+    REGIONI.flatMap((regione) =>
+      regione.piatti.map((piatto) => [piatto.nome, { nome: piatto.nome, regione: regione.nome }]),
+    ),
+  ).values(),
 );
 
 export default function PreferitiScreen() {
