@@ -5,7 +5,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { Sparkles } from 'lucide-react-native';
 import { getPiattoDelGiorno } from '../data/regioni';
-import { fetchWikipediaSummary, WIKIPEDIA_USER_AGENT } from '../data/wikipedia';
+import { wikipediaQuery, WIKIPEDIA_USER_AGENT } from '../data/wikipedia';
 import { useTheme } from '../theme/ThemeContext';
 import type { RegioniStackParamList } from '../navigation/AppNavigator';
 
@@ -16,10 +16,7 @@ export default function PiattoDelGiorno() {
   const { colors } = useTheme();
   const piatto = getPiattoDelGiorno();
 
-  const { data } = useQuery({
-    queryKey: ['wikipedia', piatto.nome],
-    queryFn: () => fetchWikipediaSummary(piatto.nome),
-  });
+  const { data } = useQuery(wikipediaQuery(piatto.nome));
 
   return (
     <TouchableOpacity

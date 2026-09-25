@@ -1,14 +1,20 @@
+import { queryOptions } from '@tanstack/react-query';
+
 export const WIKIPEDIA_USER_AGENT =
   'Forklore/1.0 (progetto scolastico ITS Prodigi; https://github.com/Barbagallo2296/Forklore)';
+
+type WikipediaImmagine = {
+  source: string;
+  width: number;
+  height: number;
+};
 
 export type WikipediaSummary = {
   title: string;
   extract: string;
-  thumbnail?: {
-    source: string;
-    width: number;
-    height: number;
-  };
+  thumbnail?: WikipediaImmagine;
+  originalimage?: WikipediaImmagine;
+  url?: string;
 };
 
 export async function fetchWikipediaSummary(
@@ -35,5 +41,14 @@ export async function fetchWikipediaSummary(
     title: data.title,
     extract: data.extract,
     thumbnail: data.thumbnail,
+    originalimage: data.originalimage,
+    url: data.content_urls?.mobile?.page,
   };
+}
+
+export function wikipediaQuery(titoloPagina: string) {
+  return queryOptions({
+    queryKey: ['wikipedia', titoloPagina],
+    queryFn: () => fetchWikipediaSummary(titoloPagina),
+  });
 }

@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
+import { useQueryClient } from '@tanstack/react-query';
 import { ChevronRight } from 'lucide-react-native';
 import { REGIONI } from '../data/regioni';
+import { wikipediaQuery } from '../data/wikipedia';
+import InfoRegione from '../components/InfoRegione';
 import { useTheme } from '../theme/ThemeContext';
 import type { RegioniStackParamList } from '../navigation/AppNavigator';
 
@@ -16,8 +19,15 @@ export default function PiattiRegioneScreen() {
   const route = useRoute<RoutePropType>();
   const { regioneId } = route.params;
   const { colors } = useTheme();
+  const queryClient = useQueryClient();
 
   const regione = REGIONI.find((r) => r.id === regioneId);
+
+  useEffect(() => {
+    regione?.piatti.forEach((piatto) => {
+      queryClient.prefetchQuery(wikipediaQuery(piatto.nome));
+    });
+  }, [regione, queryClient]);
 
   if (!regione) {
     return (
@@ -33,6 +43,7 @@ export default function PiattiRegioneScreen() {
         data={regione.piatti}
         keyExtractor={(item) => item.nome}
         contentContainerStyle={styles.listContent}
+        ListHeaderComponent={<InfoRegione nome={regione.nome} />}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={[styles.card, { backgroundColor: colors.card }]}
