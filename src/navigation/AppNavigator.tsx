@@ -10,6 +10,7 @@ import PiattiRegioneScreen from '../screens/PiattiRegioneScreen';
 import DettaglioPiattoScreen from '../screens/DettaglioPiattoScreen';
 import PreferitiScreen from '../screens/PreferitiScreen';
 import { useTheme } from '../theme/ThemeContext';
+import RegioniHomeScreen from '../screens/RegioniHomeScreen';
 
 type DettaglioParams = { piattoNome: string };
 
@@ -54,7 +55,7 @@ function RegioniStackNavigator() {
     >
       <RegioniStack.Screen
         name="Regioni"
-        component={RegioniScreen}
+        component={RegioniHomeScreen}
         options={{ title: 'Forklore' }}
       />
       <RegioniStack.Screen
