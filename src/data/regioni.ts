@@ -1,4 +1,4 @@
-import regioniData from './regioni.json';
+import regioniData from './regioni-data.json';
 
 export type Piatto = {
   nome: string;

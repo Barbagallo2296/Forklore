@@ -1,4 +1,4 @@
-const REGIONI = require('./src/data/regioni.json');
+const REGIONI = require('./src/data/regioni-data.json');
 
 const USER_AGENT = 'Forklore/1.0 (progetto scolastico ITS Prodigi; https://github.com/Barbagallo2296/Forklore)';
 
