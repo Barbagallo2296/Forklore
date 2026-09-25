@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { createMMKV } from 'react-native-mmkv';
 import { lightColors, darkColors, type ColorPalette } from './colors';
 
@@ -16,15 +16,10 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setMode] = useState<ThemeMode>('light');
-
-
-  useEffect(() => {
+  const [mode, setMode] = useState<ThemeMode>(() => {
     const salvato = storage.getString(CHIAVE_TEMA);
-    if (salvato === 'dark' || salvato === 'light') {
-      setMode(salvato);
-    }
-  }, []);
+    return salvato === 'dark' ? 'dark' : 'light';
+  });
 
   const toggleTheme = () => {
     const nuovoMode = mode === 'light' ? 'dark' : 'light';

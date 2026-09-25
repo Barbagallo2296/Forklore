@@ -29,9 +29,11 @@ export default function MappaItaliaScreen() {
               stroke={colors.textSecondary}
               strokeWidth={1}
               onPressIn={() => setRegioneAttiva(regione.id)}
-              onPressOut={() =>
-                navigation.navigate('PiattiRegione', { regioneId: regione.id })
-              }
+              onPress={() => {
+                setRegioneAttiva(null);
+                navigation.navigate('PiattiRegione', { regioneId: regione.id });
+              }}
+
             />
           ))}
         </Svg>
