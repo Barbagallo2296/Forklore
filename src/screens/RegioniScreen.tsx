@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ChevronRight } from 'lucide-react-native';
 import { REGIONI } from '../data/regioni';
+import PiattoDelGiorno from '../components/PiattoDelGiorno';
 import { useTheme } from '../theme/ThemeContext';
 import type { RegioniStackParamList } from '../navigation/AppNavigator';
 
@@ -24,6 +25,8 @@ export default function RegioniScreen() {
         data={REGIONI}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
+        ListHeaderComponent={<PiattoDelGiorno />}
+        
         renderItem={({ item, index }) => {
           const colore = COLORI_AVATAR[index % COLORI_AVATAR.length];
           return (
