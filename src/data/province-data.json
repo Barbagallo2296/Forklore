@@ -1,0 +1,64 @@
+{
+  "toscana": [
+    {
+      "id": "arezzo",
+      "nome": "Arezzo",
+      "sigla": "AR",
+      "piatti": ["Tortelli alla lastra", "Fagiolo zolfino", "Scottiglia", "Marrone di Caprese Michelangelo"]
+    },
+    {
+      "id": "firenze",
+      "nome": "Firenze",
+      "sigla": "FI",
+      "piatti": ["Schiacciata alla fiorentina", "Trippa alla fiorentina", "Cibreo", "Crostini neri toscani", "Tortelli di patate"]
+    },
+    {
+      "id": "grosseto",
+      "nome": "Grosseto",
+      "sigla": "GR",
+      "piatti": ["Acquacotta", "Tortello maremmano con spinaci", "Caldaro dell'Argentario", "Frittelle di San Giuseppe di Pitigliano", "Cialdino dei tufi"]
+    },
+    {
+      "id": "livorno",
+      "nome": "Livorno",
+      "sigla": "LI",
+      "piatti": ["5 e 5", "Farinata di ceci", "Ponce livornese", "Schiaccia briaca"]
+    },
+    {
+      "id": "lucca",
+      "nome": "Lucca",
+      "sigla": "LU",
+      "piatti": ["Buccellato di Lucca", "Farro della Garfagnana", "Neccio", "Farina di neccio della Garfagnana"]
+    },
+    {
+      "id": "massa-carrara",
+      "nome": "Massa-Carrara",
+      "sigla": "MS",
+      "piatti": ["Panigacci", "Testaroli", "Torta d'erbi", "Sgabei", "Lardo di Colonnata", "Agnello di Zeri"]
+    },
+    {
+      "id": "pisa",
+      "nome": "Pisa",
+      "sigla": "PI",
+      "piatti": ["Torta co' bischeri", "Nozza (dolce)", "Schiacciata di Pasqua", "Tartufo bianco della Toscana"]
+    },
+    {
+      "id": "pistoia",
+      "nome": "Pistoia",
+      "sigla": "PT",
+      "piatti": ["Carcerato (gastronomia)", "Migliaccio pistoiese", "Brigidino di Lamporecchio", "Berlingozzo"]
+    },
+    {
+      "id": "prato",
+      "nome": "Prato",
+      "sigla": "PO",
+      "piatti": ["Mortadella di Prato", "Bozza pratese", "Sedani ripieni alla pratese", "Pesche di Prato"]
+    },
+    {
+      "id": "siena",
+      "nome": "Siena",
+      "sigla": "SI",
+      "piatti": ["Panforte", "Ricciarelli", "Pici", "Pan co' santi", "Cavallucci (dolce toscano)"]
+    }
+  ]
+}

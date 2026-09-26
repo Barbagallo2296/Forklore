@@ -1,4 +1,5 @@
 import regioniData from './regioni-data.json';
+import provinceData from './province-data.json';
 
 export type Piatto = {
   nome: string;
@@ -7,14 +8,36 @@ export type Piatto = {
 export type Regione = {
   id: string;
   nome: string;
+  // Categoria di Wikipedia da cui caricare gli "altri piatti" della regione
+  categoria: string;
   piatti: Piatto[];
 };
 
 export const REGIONI: Regione[] = regioniData.map((r) => ({
   id: r.id,
   nome: r.nome,
+  categoria: r.categoria,
   piatti: r.piatti.map((nome) => ({ nome })),
 }));
+
+export type Provincia = {
+  id: string;
+  nome: string;
+  sigla: string;
+  piatti: Piatto[];
+};
+
+const PROVINCE: Record<string, Provincia[]> = Object.fromEntries(
+  Object.entries(provinceData).map(([regioneId, province]) => [
+    regioneId,
+    province.map((p) => ({ ...p, piatti: p.piatti.map((nome) => ({ nome })) })),
+  ]),
+);
+
+// Per ora solo la Toscana ha le province: per le altre regioni la lista è vuota
+export function getProvince(regioneId: string): Provincia[] {
+  return PROVINCE[regioneId] ?? [];
+}
 
 export type PiattoConRegione = {
   nome: string;

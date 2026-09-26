@@ -1,4 +1,5 @@
 const REGIONI = require('./src/data/regioni-data.json');
+const PROVINCE = require('./src/data/province-data.json');
 
 const USER_AGENT = 'Forklore/1.0 (progetto scolastico ITS Prodigi; https://github.com/Barbagallo2296/Forklore)';
 
@@ -18,15 +19,23 @@ async function main() {
   const fallimenti = [];
   let totale = 0;
 
-  for (const regione of REGIONI) {
-    console.log(`\n=== ${regione.nome} ===`);
-    for (const piatto of regione.piatti) {
+  // Regioni e, dove ci sono, le loro province: stessa verifica per entrambe
+  const gruppi = [
+    ...REGIONI.map((r) => ({ nome: r.nome, piatti: r.piatti })),
+    ...Object.values(PROVINCE)
+      .flat()
+      .map((p) => ({ nome: `Provincia di ${p.nome} (${p.sigla})`, piatti: p.piatti })),
+  ];
+
+  for (const gruppo of gruppi) {
+    console.log(`\n=== ${gruppo.nome} ===`);
+    for (const piatto of gruppo.piatti) {
       totale++;
       const risultato = await verificaPiatto(piatto);
       const esito = risultato.ok ? '✅ OK' : `❌ FALLITO (${risultato.status})`;
       console.log(`  ${esito} — ${piatto}`);
       if (!risultato.ok) {
-        fallimenti.push({ regione: regione.nome, piatto });
+        fallimenti.push({ regione: gruppo.nome, piatto });
       }
       await new Promise((resolve) => setTimeout(resolve, 150));
     }

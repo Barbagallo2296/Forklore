@@ -20,7 +20,7 @@ import { Heart, ExternalLink, MapPin, Share2, X } from 'lucide-react-native';
 import { wikipediaQuery, immagineHero, WIKIPEDIA_USER_AGENT } from '../data/wikipedia';
 import { isPreferito, toggleFavorito } from '../data/preferiti';
 import { segnaVisto } from '../data/visti';
-import { TUTTI_I_PIATTI } from '../data/regioni';
+import { REGIONI, TUTTI_I_PIATTI } from '../data/regioni';
 import Skeleton from '../components/Skeleton';
 import ImmagineDissolvenza from '../components/ImmagineDissolvenza';
 import StatoVuoto from '../components/StatoVuoto';
@@ -39,7 +39,7 @@ const ALTEZZA_HERO = 300;
 export default function DettaglioPiattoScreen() {
   const route = useRoute<RoutePropType>();
   const navigation = useNavigation<NavigationProp>();
-  const { piattoNome } = route.params;
+  const { piattoNome, regioneId } = route.params;
   const { colors } = useTheme();
 
   const [preferito, setPreferito] = useState(() => isPreferito(piattoNome));
@@ -52,7 +52,13 @@ export default function DettaglioPiattoScreen() {
 
   const { data, isLoading, isError } = useQuery(wikipediaQuery(piattoNome));
 
-  const piattoInfo = TUTTI_I_PIATTI.find((p) => p.nome === piattoNome);
+  // I piatti fuori dai 10 tipici (province, altri da Wikipedia) arrivano con regioneId
+  const regioneDaParametri = REGIONI.find((r) => r.id === regioneId);
+  const piattoInfo =
+    TUTTI_I_PIATTI.find((p) => p.nome === piattoNome) ??
+    (regioneDaParametri
+      ? { nome: piattoNome, regioneId: regioneDaParametri.id, regioneNome: regioneDaParametri.nome }
+      : undefined);
   const piattiCollegati = piattoInfo
     ? TUTTI_I_PIATTI.filter(
         (p) => p.regioneId === piattoInfo.regioneId && p.nome !== piattoNome,
