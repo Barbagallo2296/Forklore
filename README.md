@@ -23,8 +23,8 @@ L'app include ricerca, preferiti, profilo con statistiche e traguardi, tema chia
   - **piatto del giorno** (cambia ogni giorno);
   - card **"La tua Italia"** con l'anteprima della mappa e i progressi;
   - carosello "Continua a esplorare" (o "Da dove iniziare" per chi è all'inizio);
-  - griglia delle 20 regioni con la sagoma di ciascuna e la barra di progresso.
-- **Mappa interattiva** dell'Italia in SVG: tocca una regione per aprirla, pizzica per ingrandire. Le regioni si colorano in base ai piatti scoperti.
+  - griglia delle 20 regioni: ogni card ha la foto di un piatto tipico, la sagoma della regione e la barra di progresso.
+- **Mappa interattiva** dell'Italia in SVG, con i progressi in alto: le regioni si colorano in base ai piatti scoperti. Toccando una regione compare un'anteprima con tre piatti tipici e il pulsante per aprirla; pizzica per ingrandire.
 - **Regioni**: 10 piatti tipici scelti a mano per ciascuna, con introduzione da Wikipedia. Più la sezione **"Altri piatti della regione"**, caricata dal vivo dalla categoria Wikipedia della regione (es. *Cucina toscana*) e filtrata da vini, oli e voci non pertinenti.
 - **Province (prototipo, solo Toscana)**: le 10 province toscane con le loro specialità locali (es. Massa-Carrara: panigacci, testaroli, torta d'erbi…).
 - **Dettaglio del piatto**:
