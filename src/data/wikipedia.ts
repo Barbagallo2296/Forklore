@@ -68,3 +68,52 @@ export function immagineHero(summary: WikipediaSummary): string | undefined {
   }
   return thumbnail?.source ?? originalimage?.source;
 }
+
+export type PaginaCategoria = {
+  title: string;
+  description?: string;
+};
+
+// Tutte le pagine di una categoria (es. "Cucina toscana") con la loro breve descrizione.
+// Una sola richiesta: le categorie regionali hanno al massimo qualche centinaio di voci.
+export async function fetchCategoria(categoria: string): Promise<PaginaCategoria[]> {
+  const parametri = new URLSearchParams({
+    action: 'query',
+    generator: 'categorymembers',
+    gcmtitle: `Categoria:${categoria}`,
+    gcmtype: 'page',
+    gcmlimit: '500',
+    prop: 'description',
+    format: 'json',
+    formatversion: '2',
+  });
+  const response = await fetch(`https://it.wikipedia.org/w/api.php?${parametri}`, {
+    headers: { 'User-Agent': WIKIPEDIA_USER_AGENT, Accept: 'application/json' },
+  });
+  if (!response.ok) {
+    throw new Error(`Errore nel recupero della categoria: ${response.status}`);
+  }
+  const data = await response.json();
+  return data.query?.pages ?? [];
+}
+
+export function categoriaQuery(categoria: string) {
+  return queryOptions({
+    queryKey: ['categoria', categoria],
+    queryFn: () => fetchCategoria(categoria),
+  });
+}
+
+// Voci delle categorie di cucina che non sono piatti: vini, oli, liquori, elenchi, persone...
+const NON_PIATTI =
+  /\(olio|olio (d'oliva|extra|agrumato)|\bvin[oi]\b|\(vino\)|denominazione di origine controllata|\bDOCG?\b|liquor|\bbirr|lista di|prodotti agroalimentari|\barti (minori|maggiori)\b|corporazion|ristorant|cuoc[oa]\b|\bchef\b|aziend/i;
+
+// Tiene solo le voci che sembrano piatti, escludendo quelli già mostrati altrove
+export function filtraPiatti(pagine: PaginaCategoria[], esclusi: Set<string>): string[] {
+  return pagine
+    .filter((p) => !p.title.startsWith('Cucina '))
+    .filter((p) => !esclusi.has(p.title))
+    .filter((p) => !NON_PIATTI.test(`${p.title} ${p.description ?? ''}`))
+    .map((p) => p.title)
+    .sort((a, b) => a.localeCompare(b, 'it'));
+}

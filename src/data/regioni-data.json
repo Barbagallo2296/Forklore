@@ -2,101 +2,121 @@
   {
     "id": "abruzzo",
     "nome": "Abruzzo",
+    "categoria": "Cucina abruzzese",
     "piatti": ["Arrosticini", "Maccheroni alla chitarra", "Ventricina", "Parrozzo", "Pallotte cacio e ova", "Scrippelle 'mbusse", "Bocconotto", "Fiadone", "Confetto di Sulmona", "Mortadella di Campotosto"]
   },
   {
     "id": "basilicata",
     "nome": "Basilicata",
+    "categoria": "Cucina lucana",
     "piatti": ["Peperoni cruschi", "Pignata", "Lucanica", "Pane di Matera", "Peperone di Senise", "Baccalà alla lucana", "Strascinati", "Pasta con la mollica", "Rafanata", "Caciocavallo podolico"]
   },
   {
     "id": "calabria",
     "nome": "Calabria",
+    "categoria": "Cucina calabrese",
     "piatti": ["'Nduja", "Morzello", "Sardella", "Pitta 'mpigliata", "Fileja", "Stocco di Mammola", "Cipolla di Tropea", "Soppressata calabrese", "Pecorino crotonese", "Tartufo di Pizzo"]
   },
   {
     "id": "campania",
     "nome": "Campania",
+    "categoria": "Cucina campana",
     "piatti": ["Pizza Margherita", "Sfogliatella", "Spaghetti alle vongole", "Mozzarella di bufala campana", "Babà", "Parmigiana di melanzane", "Pastiera napoletana", "Ragù napoletano", "Mozzarella in carrozza", "Casatiello"]
   },
   {
     "id": "emilia-romagna",
     "nome": "Emilia-Romagna",
+    "categoria": "Cucina dell'Emilia-Romagna",
     "piatti": ["Tortellini", "Lasagne alla bolognese", "Piadina romagnola", "Parmigiano Reggiano", "Prosciutto di Parma", "Ragù alla bolognese", "Cotoletta alla bolognese", "Zampone", "Cappelletti", "Gnocco fritto"]
   },
   {
     "id": "friuli",
     "nome": "Friuli-Venezia Giulia",
+    "categoria": "Cucina del Friuli-Venezia Giulia",
     "piatti": ["Frico", "Jota", "Prosciutto di San Daniele", "Gubana", "Cjarsons", "Brovada", "Musetto", "Presnitz", "Strucolo", "Gulasch"]
   },
   {
     "id": "lazio",
     "nome": "Lazio",
+    "categoria": "Cucina laziale",
     "piatti": ["Carbonara", "Saltimbocca", "Cacio e pepe", "Amatriciana", "Gricia", "Abbacchio", "Coda alla vaccinara", "Carciofi alla giudia", "Supplì", "Maritozzo"]
   },
   {
     "id": "liguria",
     "nome": "Liguria",
+    "categoria": "Cucina ligure",
     "piatti": ["Pesto alla genovese", "Focaccia genovese", "Farinata", "Cima alla genovese", "Trofie", "Pansoti", "Torta pasqualina", "Focaccia di Recco", "Stoccafisso", "Minestrone alla genovese"]
   },
   {
     "id": "lombardia",
     "nome": "Lombardia",
+    "categoria": "Cucina lombarda",
     "piatti": ["Risotto alla milanese", "Cotoletta alla milanese", "Ossobuco", "Panettone", "Casoncelli", "Pizzoccheri", "Bresaola", "Gorgonzola", "Mostarda", "Torrone di Cremona"]
   },
   {
     "id": "marche",
     "nome": "Marche",
+    "categoria": "Cucina marchigiana",
     "piatti": ["Vincisgrassi", "Olive ascolane", "Brodetto all'anconetana", "Ciauscolo", "Crescia", "Maccheroncini di Campofilone", "Frustingo", "Vino cotto", "Porchetta", "Formaggio di fossa"]
   },
   {
     "id": "molise",
     "nome": "Molise",
+    "categoria": "Cucina molisana",
     "piatti": ["Cavatelli", "Pampanella", "Caciocavallo", "Scamorza", "Tarallo", "Fiadone", "Crostoli", "Ventricina", "Pasta e fagioli", "Polenta"]
   },
   {
     "id": "piemonte",
     "nome": "Piemonte",
+    "categoria": "Cucina piemontese",
     "piatti": ["Bagna cauda", "Agnolotti", "Vitello tonnato", "Bicerin", "Tajarin", "Bunet", "Gianduiotto", "Brasato", "Fritto misto alla piemontese", "Tartufo bianco"]
   },
   {
     "id": "puglia",
     "nome": "Puglia",
+    "categoria": "Cucina pugliese",
     "piatti": ["Orecchiette", "Burrata", "Focaccia barese", "Taralli", "Panzerotto", "Pasticciotto", "Tiella barese", "Ciceri e tria", "Friselle", "Cartellate"]
   },
   {
     "id": "sardegna",
     "nome": "Sardegna",
+    "categoria": "Cucina sarda",
     "piatti": ["Porceddu", "Culurgiones", "Pane carasau", "Malloreddus", "Seadas", "Fregola", "Pecorino sardo", "Bottarga", "Casu marzu", "Pardulas"]
   },
   {
     "id": "sicilia",
     "nome": "Sicilia",
+    "categoria": "Cucina siciliana",
     "piatti": ["Arancino", "Cannolo siciliano", "Caponata", "Pasta alla Norma", "Cassata siciliana", "Granita", "Panelle", "Pani ca meusa", "Sarde a beccafico", "Sfincione"]
   },
   {
     "id": "toscana",
     "nome": "Toscana",
+    "categoria": "Cucina toscana",
     "piatti": ["Bistecca alla fiorentina", "Ribollita", "Pappa al pomodoro", "Lampredotto", "Panzanella", "Cantucci", "Pecorino toscano", "Finocchiona", "Cacciucco", "Schiacciata"]
   },
   {
     "id": "trentino",
     "nome": "Trentino-Alto Adige",
+    "categoria": "Cucina del Trentino-Alto Adige",
     "piatti": ["Canederli", "Strudel di mele", "Speck Alto Adige", "Polenta", "Smacafam", "Asiago (formaggio)", "Strangolapreti", "Zelten", "Mortandela", "Puzzone di Moena"]
   },
   {
     "id": "umbria",
     "nome": "Umbria",
+    "categoria": "Cucina umbra",
     "piatti": ["Strangozzi", "Torta al testo", "Tartufo nero", "Crescia", "Torta di Pasqua", "Lenticchia di Castelluccio di Norcia", "Prosciutto di Norcia", "Torciglione", "Umbricelli", "Attorta"]
   },
   {
     "id": "valle-aosta",
     "nome": "Valle d'Aosta",
+    "categoria": "Cucina valdostana",
     "piatti": ["Fonduta valdostana", "Ciaramicola", "Polenta concia", "Cotoletta alla valdostana", "Mocetta", "Fontina", "Lardo di Arnad", "Boudin", "Tegole", "Jambon de Bosses"]
   },
   {
     "id": "veneto",
     "nome": "Veneto",
+    "categoria": "Cucina veneta",
     "piatti": ["Baccalà alla vicentina", "Risi e bisi", "Sarde in saor", "Bigoli", "Polenta e osei", "Fegato alla veneziana", "Tiramisù", "Radicchio rosso di Treviso", "Baicoli", "Pandoro"]
   }
 ]
