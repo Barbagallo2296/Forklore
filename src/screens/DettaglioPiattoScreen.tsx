@@ -1,22 +1,40 @@
-import React, { useEffect, useState } from 'react';
-import {View,Text,Image,ScrollView, TouchableOpacity,Modal,Pressable,Linking,StyleSheet,} from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+  Pressable,
+  Linking,
+  Share,
+  Animated,
+  StyleSheet,
+} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
-import { Heart, ExternalLink, X } from 'lucide-react-native';
-import { wikipediaQuery, WIKIPEDIA_USER_AGENT } from '../data/wikipedia';
+import { Heart, ExternalLink, MapPin, Share2, X } from 'lucide-react-native';
+import { wikipediaQuery, immagineHero, WIKIPEDIA_USER_AGENT } from '../data/wikipedia';
 import { isPreferito, toggleFavorito } from '../data/preferiti';
 import { segnaVisto } from '../data/visti';
 import { TUTTI_I_PIATTI } from '../data/regioni';
 import Skeleton from '../components/Skeleton';
+import ImmagineDissolvenza from '../components/ImmagineDissolvenza';
+import StatoVuoto from '../components/StatoVuoto';
+import { ombra } from '../components/Card';
 import { useTheme } from '../theme/ThemeContext';
+import { font, testo } from '../theme/tipografia';
 import type { RegioniStackParamList } from '../navigation/AppNavigator';
 
 type RoutePropType = RouteProp<RegioniStackParamList, 'DettaglioPiatto'>;
 type NavigationProp = NativeStackNavigationProp<RegioniStackParamList, 'DettaglioPiatto'>;
 
 const RIGHE_SKELETON = ['100%', '95%', '100%', '88%', '60%'] as const;
+const LUNGHEZZA_ESTRATTO_CONDIVISO = 220;
+const ALTEZZA_HERO = 300;
 
 export default function DettaglioPiattoScreen() {
   const route = useRoute<RoutePropType>();
@@ -26,13 +44,13 @@ export default function DettaglioPiattoScreen() {
 
   const [preferito, setPreferito] = useState(() => isPreferito(piattoNome));
   const [immagineAperta, setImmagineAperta] = useState(false);
+  const scalaCuore = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     segnaVisto(piattoNome);
   }, [piattoNome]);
 
   const { data, isLoading, isError } = useQuery(wikipediaQuery(piattoNome));
-
 
   const piattoInfo = TUTTI_I_PIATTI.find((p) => p.nome === piattoNome);
   const piattiCollegati = piattoInfo
@@ -44,14 +62,39 @@ export default function DettaglioPiattoScreen() {
   const handleToggle = () => {
     toggleFavorito(piattoNome);
     setPreferito((prev) => !prev);
+    Animated.sequence([
+      Animated.timing(scalaCuore, { toValue: 1.35, duration: 120, useNativeDriver: true }),
+      Animated.spring(scalaCuore, { toValue: 1, friction: 3, useNativeDriver: true }),
+    ]).start();
+  };
+
+  const handleCondividi = () => {
+    if (!data) {
+      return;
+    }
+    const estratto =
+      data.extract.length > LUNGHEZZA_ESTRATTO_CONDIVISO
+        ? `${data.extract.slice(0, LUNGHEZZA_ESTRATTO_CONDIVISO).trimEnd()}…`
+        : data.extract;
+    const righe = [
+      `🍴 ${data.title}${piattoInfo ? ` (${piattoInfo.regioneNome})` : ''}`,
+      '',
+      estratto,
+    ];
+    if (data.url) {
+      righe.push('', `Scopri di più: ${data.url}`);
+    }
+    righe.push('', 'Condiviso da Forklore');
+    Share.share({ title: data.title, message: righe.join('\n') });
   };
 
   if (isLoading) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <View style={styles.scrollContent}>
-          <Skeleton width={280} height={200} borderRadius={20} style={styles.imageWrapper} />
-          <Skeleton width={200} height={26} />
+        <Skeleton width="100%" height={ALTEZZA_HERO} borderRadius={0} style={styles.skeletonHero} />
+        <View style={styles.contenuto}>
+          <Skeleton width={110} height={24} borderRadius={12} style={styles.rigaSkeleton} />
+          <Skeleton width="75%" height={32} style={styles.rigaSkeleton} />
           <View style={[styles.divider, { backgroundColor: colors.placeholder }]} />
           {RIGHE_SKELETON.map((larghezza, i) => (
             <Skeleton key={i} width={larghezza} height={16} style={styles.rigaSkeleton} />
@@ -64,15 +107,17 @@ export default function DettaglioPiattoScreen() {
   if (isError || !data) {
     return (
       <View style={[styles.centerContainer, { backgroundColor: colors.background }]}>
-        <Text style={styles.errorEmoji}>😕</Text>
-        <Text style={[styles.errorText, { color: colors.textSecondary }]}>
-          Non è stato possibile caricare le informazioni su questo piatto.
-        </Text>
+        <StatoVuoto
+          emoji="😕"
+          titolo="Piatto non disponibile"
+          messaggio="Non è stato possibile caricare le informazioni. Controlla la connessione e riprova."
+        />
       </View>
     );
   }
 
   const immagineGrande = data.originalimage ?? data.thumbnail;
+  const hero = immagineHero(data);
 
   return (
     <>
@@ -80,78 +125,104 @@ export default function DettaglioPiattoScreen() {
         style={[styles.container, { backgroundColor: colors.background }]}
         contentContainerStyle={styles.scrollContent}
       >
-        <View style={styles.imageWrapper}>
-          {data.thumbnail ? (
-            <TouchableOpacity activeOpacity={0.85} onPress={() => setImmagineAperta(true)}>
-              <Image
-                source={{
-                  uri: data.thumbnail.source,
-                  headers: { 'User-Agent': WIKIPEDIA_USER_AGENT },
-                }}
-                style={styles.image}
-              />
+        <View style={styles.hero}>
+          {hero ? (
+            <TouchableOpacity activeOpacity={0.9} onPress={() => setImmagineAperta(true)}>
+              <ImmagineDissolvenza uri={hero} style={styles.heroImmagine} />
             </TouchableOpacity>
           ) : (
-            <View style={[styles.imagePlaceholder, { backgroundColor: colors.placeholder }]}>
-              <Text style={styles.imagePlaceholderEmoji}>🍽️</Text>
+            <View
+              style={[
+                styles.heroImmagine,
+                styles.heroSegnaposto,
+                { backgroundColor: colors.placeholder },
+              ]}
+            >
+              <Text style={styles.heroSegnapostoEmoji}>🍽️</Text>
             </View>
           )}
 
-          <TouchableOpacity
-            style={[styles.cuoreButton, { backgroundColor: colors.card }]}
-            onPress={handleToggle}
-            activeOpacity={0.7}
-          >
-            <Heart
-              size={20}
-              color={colors.primary}
-              fill={preferito ? colors.primary : 'transparent'}
-            />
-          </TouchableOpacity>
+          <View style={styles.azioni}>
+            <TouchableOpacity
+              style={[styles.azioneButton, { backgroundColor: colors.card }]}
+              onPress={handleCondividi}
+              activeOpacity={0.7}
+            >
+              <Share2 size={19} color={colors.textPrimary} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.azioneButton, { backgroundColor: colors.card }]}
+              onPress={handleToggle}
+              activeOpacity={0.7}
+            >
+              <Animated.View style={{ transform: [{ scale: scalaCuore }] }}>
+                <Heart
+                  size={20}
+                  color={colors.primary}
+                  fill={preferito ? colors.primary : 'transparent'}
+                />
+              </Animated.View>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <Text style={[styles.titolo, { color: colors.textPrimary }]}>{data.title}</Text>
-        <View style={[styles.divider, { backgroundColor: colors.primary }]} />
-        <Text style={[styles.testo, { color: colors.textPrimary }]}>{data.extract}</Text>
+        <View style={styles.contenuto}>
+          {piattoInfo && (
+            <View style={[styles.chipRegione, { backgroundColor: colors.secondaryLight }]}>
+              <MapPin size={13} color={colors.secondary} />
+              <Text style={[styles.chipRegioneTesto, { color: colors.secondary }]}>
+                {piattoInfo.regioneNome}
+              </Text>
+            </View>
+          )}
 
-        {data.url && (
-          <TouchableOpacity
-            style={[styles.bottoneWiki, { borderColor: colors.primary }]}
-            onPress={() => Linking.openURL(data.url!)}
-            activeOpacity={0.7}
-          >
-            <ExternalLink size={16} color={colors.primary} />
-            <Text style={[styles.bottoneWikiTesto, { color: colors.primary }]}>
-              Leggi tutto su Wikipedia
-            </Text>
-          </TouchableOpacity>
-        )}
+          <Text style={[testo.titoloGrande, { color: colors.textPrimary }]}>{data.title}</Text>
+          <View style={[styles.divider, { backgroundColor: colors.primary }]} />
+          <Text style={[testo.corpo, { color: colors.textPrimary }]}>{data.extract}</Text>
 
-        <Text style={[styles.fonte, { color: colors.textTertiary }]}>Fonte: Wikipedia</Text>
-
-        {piattoInfo && piattiCollegati.length > 0 && (
-          <View style={styles.collegatiSezione}>
-            <Text style={[styles.collegatiTitolo, { color: colors.textPrimary }]}>
-              Altri piatti tipici · {piattoInfo.regioneNome}
-            </Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.collegatiLista}
+          {data.url && (
+            <TouchableOpacity
+              style={[styles.bottoneWiki, { backgroundColor: colors.primary }]}
+              onPress={() => Linking.openURL(data.url!)}
+              activeOpacity={0.8}
             >
-              {piattiCollegati.map((p) => (
-                <TouchableOpacity
-                  key={p.nome}
-                  style={[styles.chip, { backgroundColor: colors.card, borderColor: colors.border }]}
-                  activeOpacity={0.7}
-                  onPress={() => navigation.push('DettaglioPiatto', { piattoNome: p.nome })}
-                >
-                  <Text style={[styles.chipTesto, { color: colors.textPrimary }]}>{p.nome}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-        )}
+              <ExternalLink size={17} color={colors.onPrimary} />
+              <Text style={[styles.bottoneWikiTesto, { color: colors.onPrimary }]}>
+                Leggi tutto su Wikipedia
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          <Text style={[styles.fonte, { color: colors.textTertiary }]}>
+            Testo e immagini da Wikipedia
+          </Text>
+
+          {piattoInfo && piattiCollegati.length > 0 && (
+            <View style={styles.collegatiSezione}>
+              <Text
+                style={[testo.titoloSezione, styles.collegatiTitolo, { color: colors.textPrimary }]}
+              >
+                Altri piatti · {piattoInfo.regioneNome}
+              </Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.collegatiLista}
+              >
+                {piattiCollegati.map((p) => (
+                  <TouchableOpacity
+                    key={p.nome}
+                    style={[styles.chip, { backgroundColor: colors.card, borderColor: colors.border }]}
+                    activeOpacity={0.7}
+                    onPress={() => navigation.push('DettaglioPiatto', { piattoNome: p.nome })}
+                  >
+                    <Text style={[styles.chipTesto, { color: colors.textPrimary }]}>{p.nome}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+        </View>
       </ScrollView>
 
       {immagineGrande && (
@@ -162,7 +233,10 @@ export default function DettaglioPiattoScreen() {
           statusBarTranslucent
           onRequestClose={() => setImmagineAperta(false)}
         >
-          <Pressable style={styles.modalSfondo} onPress={() => setImmagineAperta(false)}>
+          <Pressable
+            style={[styles.modalSfondo, { backgroundColor: colors.overlay }]}
+            onPress={() => setImmagineAperta(false)}
+          >
             <Image
               source={{
                 uri: immagineGrande.source,
@@ -186,103 +260,100 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    alignItems: 'center',
-    padding: 24,
+    paddingBottom: 32,
   },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
+  },
+  skeletonHero: {
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
   },
   rigaSkeleton: {
     marginBottom: 10,
   },
-  errorEmoji: {
-    fontSize: 40,
-    marginBottom: 12,
+  hero: {
+    marginBottom: 8,
   },
-  errorText: {
-    fontSize: 15,
-    textAlign: 'center',
+  heroImmagine: {
+    width: '100%',
+    height: ALTEZZA_HERO,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
   },
-  imageWrapper: {
-    marginBottom: 20,
-  },
-  image: {
-    width: 280,
-    height: 200,
-    borderRadius: 20,
-  },
-  imagePlaceholder: {
-    width: 280,
-    height: 200,
-    borderRadius: 20,
+  heroSegnaposto: {
     justifyContent: 'center',
     alignItems: 'center',
   },
-  imagePlaceholderEmoji: {
-    fontSize: 56,
+  heroSegnapostoEmoji: {
+    fontSize: 64,
   },
-  cuoreButton: {
+  // I bottoni stanno a cavallo del bordo inferiore dell'immagine
+  azioni: {
     position: 'absolute',
-    top: 10,
-    right: 10,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    right: 20,
+    bottom: -23,
+    flexDirection: 'row',
+    gap: 10,
+  },
+  azioneButton: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
-    elevation: 3,
+    ...ombra,
+    elevation: 4,
   },
-  titolo: {
-    fontSize: 24,
-    fontWeight: '700',
-    textAlign: 'center',
-    letterSpacing: 0.2,
+  contenuto: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  chipRegione: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+  chipRegioneTesto: {
+    fontFamily: font.bold,
+    fontSize: 13,
   },
   divider: {
-    width: 40,
+    width: 44,
     height: 4,
     borderRadius: 2,
     marginTop: 12,
-    marginBottom: 18,
-  },
-  testo: {
-    fontSize: 16,
-    lineHeight: 25,
-    textAlign: 'center',
+    marginBottom: 16,
   },
   bottoneWiki: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    justifyContent: 'center',
+    gap: 8,
     marginTop: 24,
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderRadius: 22,
-    borderWidth: 1.5,
+    paddingVertical: 14,
+    borderRadius: 14,
   },
   bottoneWikiTesto: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontFamily: font.bold,
+    fontSize: 15,
   },
   fonte: {
-    marginTop: 12,
+    fontFamily: font.regular,
+    marginTop: 10,
     fontSize: 12,
-    fontStyle: 'italic',
+    textAlign: 'center',
   },
   collegatiSezione: {
-    alignSelf: 'stretch',
     marginTop: 32,
   },
   collegatiTitolo: {
-    fontSize: 16,
-    fontWeight: '700',
     marginBottom: 12,
   },
   collegatiLista: {
@@ -296,12 +367,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   chipTesto: {
+    fontFamily: font.semibold,
     fontSize: 14,
-    fontWeight: '500',
   },
   modalSfondo: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.95)',
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -52,3 +52,19 @@ export function wikipediaQuery(titoloPagina: string) {
     queryFn: () => fetchWikipediaSummary(titoloPagina),
   });
 }
+
+const LARGHEZZA_HERO = 960;
+
+// URL di un'immagine abbastanza grande per occupare tutta la larghezza dello schermo.
+// Wikimedia genera miniature solo in alcune larghezze standard (tra cui 960px):
+// si parte dalla miniatura e si cambia la larghezza nell'URL.
+export function immagineHero(summary: WikipediaSummary): string | undefined {
+  const { thumbnail, originalimage } = summary;
+  if (originalimage && originalimage.width <= LARGHEZZA_HERO) {
+    return originalimage.source;
+  }
+  if (thumbnail && /\/\d+px-/.test(thumbnail.source)) {
+    return thumbnail.source.replace(/\/\d+px-/, `/${LARGHEZZA_HERO}px-`);
+  }
+  return thumbnail?.source ?? originalimage?.source;
+}
