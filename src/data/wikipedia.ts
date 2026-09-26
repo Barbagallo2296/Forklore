@@ -37,14 +37,20 @@ export async function fetchWikipediaSummary(
 
   const data = await response.json();
 
+  // Alcune pagine hanno come immagine un segnaposto ("Nessuna immagine disponibile"):
+  // meglio non mostrarla e usare il nostro
+  const segnaposto = IMMAGINI_SEGNAPOSTO.test(data.thumbnail?.source ?? '');
+
   return {
     title: data.title,
     extract: data.extract,
-    thumbnail: data.thumbnail,
-    originalimage: data.originalimage,
+    thumbnail: segnaposto ? undefined : data.thumbnail,
+    originalimage: segnaposto ? undefined : data.originalimage,
     url: data.content_urls?.mobile?.page,
   };
 }
+
+const IMMAGINI_SEGNAPOSTO = /Nessuna_immagine|No_image|Noimage/i;
 
 export function wikipediaQuery(titoloPagina: string) {
   return queryOptions({

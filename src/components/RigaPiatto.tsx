@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { Check, ChevronRight } from 'lucide-react-native';
 import { wikipediaQuery } from '../data/wikipedia';
+import { nomeVisibile } from '../data/regioni';
 import Card from './Card';
 import ImmagineDissolvenza from './ImmagineDissolvenza';
 import { useTheme } from '../theme/ThemeContext';
@@ -32,7 +33,7 @@ export default function RigaPiatto({ nome, regione, visto = false, onPress }: Pr
 
       <View style={styles.testi}>
         <Text style={[testo.voce, { color: colors.textPrimary }]} numberOfLines={2}>
-          {nome}
+          {nomeVisibile(nome)}
         </Text>
         {(regione || visto) && (
           <View style={styles.riga}>

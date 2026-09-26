@@ -2,8 +2,8 @@ import React, { useCallback, useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { REGIONI } from '../data/regioni';
-import { getPreferiti } from '../data/preferiti';
+import { REGIONI, trovaRegioneDelPiatto } from '../data/regioni';
+import { getPreferiti, getRegioniPreferiti } from '../data/preferiti';
 import RigaPiatto from '../components/RigaPiatto';
 import StatoVuoto from '../components/StatoVuoto';
 import ComparsaAnimata from '../components/ComparsaAnimata';
@@ -13,28 +13,34 @@ import type { PreferitiStackParamList } from '../navigation/AppNavigator';
 
 type NavigationProp = NativeStackNavigationProp<PreferitiStackParamList, 'DettaglioPiatto'>;
 
-const TUTTI_I_PIATTI = Array.from(
-  new Map(
-    REGIONI.flatMap((regione) =>
-      regione.piatti.map((piatto) => [piatto.nome, { nome: piatto.nome, regione: regione.nome }]),
-    ),
-  ).values(),
-);
+type Preferito = { nome: string; regioneId?: string; regioneNome?: string };
+
+// Tutti i preferiti, anche quelli di provincia o presi dagli "altri piatti" di Wikipedia.
+// I più recenti in cima.
+function caricaPreferiti(): Preferito[] {
+  const regioniSalvate = getRegioniPreferiti();
+  return getPreferiti()
+    .slice()
+    .reverse()
+    .map((nome) => {
+      const regione =
+        REGIONI.find((r) => r.id === regioniSalvate[nome]) ?? trovaRegioneDelPiatto(nome);
+      return { nome, regioneId: regione?.id, regioneNome: regione?.nome };
+    });
+}
 
 export default function PreferitiScreen() {
   const navigation = useNavigation<NavigationProp>();
-  const [preferiti, setPreferiti] = useState<string[]>([]);
+  const [preferiti, setPreferiti] = useState<Preferito[]>([]);
   const { colors } = useTheme();
 
   useFocusEffect(
     useCallback(() => {
-      setPreferiti(getPreferiti());
+      setPreferiti(caricaPreferiti());
     }, []),
   );
 
-  const piattiPreferiti = TUTTI_I_PIATTI.filter((p) => preferiti.includes(p.nome));
-
-  if (piattiPreferiti.length === 0) {
+  if (preferiti.length === 0) {
     return (
       <View style={[styles.emptyContainer, { backgroundColor: colors.background }]}>
         <StatoVuoto
@@ -49,22 +55,25 @@ export default function PreferitiScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
-        data={piattiPreferiti}
+        data={preferiti}
         keyExtractor={(item) => item.nome}
         contentContainerStyle={styles.listContent}
         ListHeaderComponent={
           <Text style={[styles.conteggio, { color: colors.textSecondary }]}>
-            {piattiPreferiti.length === 1
-              ? '1 piatto salvato'
-              : `${piattiPreferiti.length} piatti salvati`}
+            {preferiti.length === 1 ? '1 piatto salvato' : `${preferiti.length} piatti salvati`}
           </Text>
         }
         renderItem={({ item, index }) => (
           <ComparsaAnimata indice={index}>
             <RigaPiatto
               nome={item.nome}
-              regione={item.regione}
-              onPress={() => navigation.navigate('DettaglioPiatto', { piattoNome: item.nome })}
+              regione={item.regioneNome}
+              onPress={() =>
+                navigation.navigate('DettaglioPiatto', {
+                  piattoNome: item.nome,
+                  regioneId: item.regioneId,
+                })
+              }
             />
           </ComparsaAnimata>
         )}

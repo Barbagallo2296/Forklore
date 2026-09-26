@@ -90,3 +90,20 @@ export function cercaPiatti(testo: string): PiattoConRegione[] {
     (p) => normalizza(p.nome).includes(cercato) || normalizza(p.regioneNome).includes(cercato),
   );
 }
+
+// Nome da mostrare: senza la precisazione tra parentesi dei titoli di Wikipedia
+// (es. "Jota (gastronomia)" → "Jota"). I dati restano il titolo esatto della pagina.
+export function nomeVisibile(titolo: string): string {
+  return titolo.replace(/\s*\([^)]*\)$/, '');
+}
+
+// Regione di un piatto cercandolo tra i piatti tipici e quelli delle province
+export function trovaRegioneDelPiatto(nome: string): Regione | undefined {
+  const tipico = TUTTI_I_PIATTI.find((p) => p.nome === nome);
+  const regioneId =
+    tipico?.regioneId ??
+    Object.keys(PROVINCE).find((id) =>
+      PROVINCE[id].some((provincia) => provincia.piatti.some((p) => p.nome === nome)),
+    );
+  return REGIONI.find((r) => r.id === regioneId);
+}

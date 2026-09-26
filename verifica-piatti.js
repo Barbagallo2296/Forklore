@@ -9,7 +9,15 @@ async function verificaPiatto(nome) {
     const response = await fetch(url, {
       headers: { 'User-Agent': USER_AGENT, Accept: 'application/json' },
     });
-    return { nome, ok: response.status === 200, status: response.status };
+    if (response.status !== 200) {
+      return { nome, ok: false, status: response.status };
+    }
+    // Una pagina di disambiguazione esiste ma non descrive il piatto (es. "Schiacciata")
+    const pagina = await response.json();
+    if (pagina.type === 'disambiguation') {
+      return { nome, ok: false, status: 'pagina di disambiguazione' };
+    }
+    return { nome, ok: true, status: 200 };
   } catch (err) {
     return { nome, ok: false, status: 'errore di rete' };
   }

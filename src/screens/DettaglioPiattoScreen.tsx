@@ -20,7 +20,7 @@ import { Heart, ExternalLink, MapPin, Share2, X } from 'lucide-react-native';
 import { wikipediaQuery, immagineHero, WIKIPEDIA_USER_AGENT } from '../data/wikipedia';
 import { isPreferito, toggleFavorito } from '../data/preferiti';
 import { segnaVisto } from '../data/visti';
-import { REGIONI, TUTTI_I_PIATTI } from '../data/regioni';
+import { REGIONI, TUTTI_I_PIATTI, nomeVisibile, trovaRegioneDelPiatto } from '../data/regioni';
 import Skeleton from '../components/Skeleton';
 import ImmagineDissolvenza from '../components/ImmagineDissolvenza';
 import StatoVuoto from '../components/StatoVuoto';
@@ -53,7 +53,8 @@ export default function DettaglioPiattoScreen() {
   const { data, isLoading, isError } = useQuery(wikipediaQuery(piattoNome));
 
   // I piatti fuori dai 10 tipici (province, altri da Wikipedia) arrivano con regioneId
-  const regioneDaParametri = REGIONI.find((r) => r.id === regioneId);
+  const regioneDaParametri =
+    REGIONI.find((r) => r.id === regioneId) ?? trovaRegioneDelPiatto(piattoNome);
   const piattoInfo =
     TUTTI_I_PIATTI.find((p) => p.nome === piattoNome) ??
     (regioneDaParametri
@@ -66,7 +67,7 @@ export default function DettaglioPiattoScreen() {
     : [];
 
   const handleToggle = () => {
-    toggleFavorito(piattoNome);
+    toggleFavorito(piattoNome, piattoInfo?.regioneId);
     setPreferito((prev) => !prev);
     Animated.sequence([
       Animated.timing(scalaCuore, { toValue: 1.35, duration: 120, useNativeDriver: true }),
@@ -83,7 +84,7 @@ export default function DettaglioPiattoScreen() {
         ? `${data.extract.slice(0, LUNGHEZZA_ESTRATTO_CONDIVISO).trimEnd()}…`
         : data.extract;
     const righe = [
-      `🍴 ${data.title}${piattoInfo ? ` (${piattoInfo.regioneNome})` : ''}`,
+      `🍴 ${nomeVisibile(data.title)}${piattoInfo ? ` (${piattoInfo.regioneNome})` : ''}`,
       '',
       estratto,
     ];
@@ -91,7 +92,7 @@ export default function DettaglioPiattoScreen() {
       righe.push('', `Scopri di più: ${data.url}`);
     }
     righe.push('', 'Condiviso da Forklore');
-    Share.share({ title: data.title, message: righe.join('\n') });
+    Share.share({ title: nomeVisibile(data.title), message: righe.join('\n') });
   };
 
   if (isLoading) {
@@ -182,7 +183,9 @@ export default function DettaglioPiattoScreen() {
             </View>
           )}
 
-          <Text style={[testo.titoloGrande, { color: colors.textPrimary }]}>{data.title}</Text>
+          <Text style={[testo.titoloGrande, { color: colors.textPrimary }]}>
+            {nomeVisibile(data.title)}
+          </Text>
           <View style={[styles.divider, { backgroundColor: colors.primary }]} />
           <Text style={[testo.corpo, { color: colors.textPrimary }]}>{data.extract}</Text>
 
@@ -222,7 +225,9 @@ export default function DettaglioPiattoScreen() {
                     activeOpacity={0.7}
                     onPress={() => navigation.push('DettaglioPiatto', { piattoNome: p.nome })}
                   >
-                    <Text style={[styles.chipTesto, { color: colors.textPrimary }]}>{p.nome}</Text>
+                    <Text style={[styles.chipTesto, { color: colors.textPrimary }]}>
+                      {nomeVisibile(p.nome)}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </ScrollView>

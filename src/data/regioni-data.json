@@ -9,7 +9,7 @@
     "id": "basilicata",
     "nome": "Basilicata",
     "categoria": "Cucina lucana",
-    "piatti": ["Peperoni cruschi", "Pignata", "Lucanica", "Pane di Matera", "Peperone di Senise", "Baccalà alla lucana", "Strascinati", "Pasta con la mollica", "Rafanata", "Caciocavallo podolico"]
+    "piatti": ["Peperoni cruschi", "Crapiata", "Lucanica", "Pane di Matera", "Peperone di Senise", "Baccalà alla lucana", "Strascinati", "Pasta con la mollica", "Rafanata", "Caciocavallo podolico"]
   },
   {
     "id": "calabria",
@@ -33,7 +33,7 @@
     "id": "friuli",
     "nome": "Friuli-Venezia Giulia",
     "categoria": "Cucina del Friuli-Venezia Giulia",
-    "piatti": ["Frico", "Jota", "Prosciutto di San Daniele", "Gubana", "Cjarsons", "Brovada", "Musetto", "Presnitz", "Strucolo", "Gulasch"]
+    "piatti": ["Frico", "Jota (gastronomia)", "Prosciutto di San Daniele", "Gubana", "Cjarsons", "Brovada", "Musetto (gastronomia)", "Presnitz", "Strucolo", "Gulasch"]
   },
   {
     "id": "lazio",
@@ -51,7 +51,7 @@
     "id": "lombardia",
     "nome": "Lombardia",
     "categoria": "Cucina lombarda",
-    "piatti": ["Risotto alla milanese", "Cotoletta alla milanese", "Ossobuco", "Panettone", "Casoncelli", "Pizzoccheri", "Bresaola", "Gorgonzola", "Mostarda", "Torrone di Cremona"]
+    "piatti": ["Risotto alla milanese", "Cotoletta alla milanese", "Ossobuco", "Panettone", "Casoncelli", "Pizzoccheri della Valtellina", "Bresaola", "Gorgonzola", "Mostarda", "Torrone di Cremona"]
   },
   {
     "id": "marche",
@@ -63,13 +63,13 @@
     "id": "molise",
     "nome": "Molise",
     "categoria": "Cucina molisana",
-    "piatti": ["Cavatelli", "Pampanella", "Caciocavallo", "Scamorza", "Tarallo", "Fiadone", "Crostoli", "Ventricina", "Pasta e fagioli", "Polenta"]
+    "piatti": ["Cavatelli", "Pampanella (gastronomia)", "Caciocavallo", "Scamorza", "Tarallo", "Fiadone", "Crostoli", "Ventricina", "Pasta e fagioli", "Polenta"]
   },
   {
     "id": "piemonte",
     "nome": "Piemonte",
     "categoria": "Cucina piemontese",
-    "piatti": ["Bagna cauda", "Agnolotti", "Vitello tonnato", "Bicerin", "Tajarin", "Bunet", "Gianduiotto", "Brasato", "Fritto misto alla piemontese", "Tartufo bianco"]
+    "piatti": ["Bagna cauda", "Agnolotti piemontesi", "Vitello tonnato", "Bicerin", "Tajarin", "Bunet", "Gianduiotto", "Brasato", "Fritto misto alla piemontese", "Tartufo bianco"]
   },
   {
     "id": "puglia",
@@ -93,7 +93,7 @@
     "id": "toscana",
     "nome": "Toscana",
     "categoria": "Cucina toscana",
-    "piatti": ["Bistecca alla fiorentina", "Ribollita", "Pappa al pomodoro", "Lampredotto", "Panzanella", "Cantucci", "Pecorino toscano", "Finocchiona", "Cacciucco", "Schiacciata"]
+    "piatti": ["Bistecca alla fiorentina", "Ribollita", "Pappa al pomodoro", "Lampredotto", "Panzanella", "Cantucci", "Pecorino toscano", "Finocchiona", "Cacciucco", "Schiacciata (gastronomia)"]
   },
   {
     "id": "trentino",
@@ -111,7 +111,7 @@
     "id": "valle-aosta",
     "nome": "Valle d'Aosta",
     "categoria": "Cucina valdostana",
-    "piatti": ["Fonduta valdostana", "Ciaramicola", "Polenta concia", "Cotoletta alla valdostana", "Mocetta", "Fontina", "Lardo di Arnad", "Boudin", "Tegole", "Jambon de Bosses"]
+    "piatti": ["Fonduta valdostana", "Ciaramicola", "Polenta concia", "Cotoletta alla valdostana", "Mocetta", "Fontina", "Lardo di Arnad", "Boudin (insaccato)", "Tegole", "Jambon de Bosses"]
   },
   {
     "id": "veneto",

@@ -5,7 +5,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import { Sparkles } from 'lucide-react-native';
-import { getPiattoDelGiorno } from '../data/regioni';
+import { getPiattoDelGiorno, nomeVisibile } from '../data/regioni';
 import { wikipediaQuery, immagineHero } from '../data/wikipedia';
 import ImmagineDissolvenza from './ImmagineDissolvenza';
 import { ombra } from './Card';
@@ -55,7 +55,7 @@ export default function PiattoDelGiorno() {
 
       <View style={styles.testi}>
         <Text style={styles.nome} numberOfLines={2}>
-          {piatto.nome}
+          {nomeVisibile(piatto.nome)}
         </Text>
         <Text style={styles.regione}>{piatto.regioneNome}</Text>
       </View>
