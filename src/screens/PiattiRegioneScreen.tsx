@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
-import { ChevronRight } from 'lucide-react-native';
 import { REGIONI } from '../data/regioni';
 import { wikipediaQuery } from '../data/wikipedia';
+import { getVisti } from '../data/visti';
 import InfoRegione from '../components/InfoRegione';
+import RigaPiatto from '../components/RigaPiatto';
+import ComparsaAnimata from '../components/ComparsaAnimata';
 import { useTheme } from '../theme/ThemeContext';
 import type { RegioniStackParamList } from '../navigation/AppNavigator';
 
@@ -20,6 +22,13 @@ export default function PiattiRegioneScreen() {
   const { regioneId } = route.params;
   const { colors } = useTheme();
   const queryClient = useQueryClient();
+  const [visti, setVisti] = useState<string[]>([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setVisti(getVisti());
+    }, []),
+  );
 
   const regione = REGIONI.find((r) => r.id === regioneId);
 
@@ -43,20 +52,22 @@ export default function PiattiRegioneScreen() {
         data={regione.piatti}
         keyExtractor={(item) => item.nome}
         contentContainerStyle={styles.listContent}
-        ListHeaderComponent={<InfoRegione nome={regione.nome} />}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[styles.card, { backgroundColor: colors.card }]}
-            activeOpacity={0.6}
-            onPress={() =>
-              navigation.navigate('DettaglioPiatto', { piattoNome: item.nome })
-            }
-          >
-            <Text style={[styles.nomePiatto, { color: colors.textPrimary }]}>
-              {item.nome}
-            </Text>
-            <ChevronRight color={colors.chevron} size={22} />
-          </TouchableOpacity>
+        ListHeaderComponent={
+          <InfoRegione
+            regioneId={regione.id}
+            nome={regione.nome}
+            scoperti={regione.piatti.filter((p) => visti.includes(p.nome)).length}
+            totale={regione.piatti.length}
+          />
+        }
+        renderItem={({ item, index }) => (
+          <ComparsaAnimata indice={index}>
+            <RigaPiatto
+              nome={item.nome}
+              visto={visti.includes(item.nome)}
+              onPress={() => navigation.navigate('DettaglioPiatto', { piattoNome: item.nome })}
+            />
+          </ComparsaAnimata>
         )}
       />
     </View>
@@ -68,24 +79,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContent: {
-    padding: 12,
-  },
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderRadius: 14,
-    paddingVertical: 16,
     paddingHorizontal: 16,
-    marginBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  nomePiatto: {
-    fontSize: 16,
-    fontWeight: '600',
+    paddingTop: 8,
+    paddingBottom: 24,
   },
 });
