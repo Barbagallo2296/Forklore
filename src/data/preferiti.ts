@@ -25,3 +25,6 @@ export function toggleFavorito(nomePiatto: string): string[] {
   storage.set(CHIAVE_PREFERITI, JSON.stringify(nuovi));
   return nuovi;
 }
+export function azzeraPreferiti(): void {
+  storage.remove(CHIAVE_PREFERITI);
+}

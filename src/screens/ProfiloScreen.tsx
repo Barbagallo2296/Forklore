@@ -1,10 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Animated, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Animated, Alert, StyleSheet } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { LogOut, Moon, Smartphone, Sun } from 'lucide-react-native';
+import { LogOut, Moon, RotateCcw, Smartphone, Sun } from 'lucide-react-native';
 import { REGIONI, NUMERO_PIATTI_UNICI } from '../data/regioni';
-import { getVisti, calcolaProgresso, contaConquistate } from '../data/visti';
-import { getPreferiti } from '../data/preferiti';
+import {
+  getVisti,
+  azzeraVisti,
+  filtraCurati,
+  calcolaProgresso,
+  contaConquistate,
+} from '../data/visti';
+import { getPreferiti, azzeraPreferiti } from '../data/preferiti';
 import { calcolaTraguardi } from '../data/traguardi';
 import ComparsaAnimata from '../components/ComparsaAnimata';
 import Card from '../components/Card';
@@ -27,7 +33,7 @@ export default function ProfiloScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      setVisti(getVisti());
+      setVisti(filtraCurati(getVisti()));
       setPreferiti(getPreferiti());
     }, []),
   );
@@ -45,6 +51,26 @@ export default function ProfiloScreen() {
       useNativeDriver: false,
     }).start();
   }, [larghezzaBarra, percentuale]);
+
+  const confermaAzzera = () => {
+    Alert.alert(
+      'Azzerare i progressi?',
+      'Piatti scoperti, regioni conquistate, traguardi e preferiti verranno cancellati. Nome e tema restano.',
+      [
+        { text: 'Annulla', style: 'cancel' },
+        {
+          text: 'Azzera',
+          style: 'destructive',
+          onPress: () => {
+            azzeraVisti();
+            azzeraPreferiti();
+            setVisti([]);
+            setPreferiti([]);
+          },
+        },
+      ],
+    );
+  };
 
   const statistiche = [
     { valore: `${visti.length}/${NUMERO_PIATTI_UNICI}`, etichetta: 'Piatti scoperti' },
@@ -162,7 +188,16 @@ export default function ProfiloScreen() {
       </View>
 
       <TouchableOpacity
-        style={[styles.esci, { borderColor: colors.border }]}
+        style={[styles.esci, { borderColor: colors.primary }]}
+        onPress={confermaAzzera}
+        activeOpacity={0.7}
+      >
+        <RotateCcw size={18} color={colors.primary} />
+        <Text style={[styles.esciTesto, { color: colors.primary }]}>Azzera progressi</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.esci, styles.esciSotto, { borderColor: colors.border }]}
         onPress={esci}
         activeOpacity={0.7}
       >
@@ -323,6 +358,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
+  },
+  esciSotto: {
+    marginTop: 12,
   },
   esciTesto: {
     fontSize: 15,

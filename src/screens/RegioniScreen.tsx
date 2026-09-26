@@ -12,7 +12,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Search, X } from 'lucide-react-native';
 import { REGIONI, cercaPiatti } from '../data/regioni';
-import { getVisti, calcolaProgresso, contaConquistate } from '../data/visti';
+import { getVisti, filtraCurati, calcolaProgresso, contaConquistate } from '../data/visti';
 import PiattoDelGiorno from '../components/PiattoDelGiorno';
 import AnteprimaMappa from '../components/AnteprimaMappa';
 import CardRegione from '../components/CardRegione';
@@ -86,7 +86,7 @@ export default function RegioniScreen() {
 
       <AnteprimaMappa
         progresso={progresso}
-        piattiScoperti={visti.length}
+        piattiScoperti={filtraCurati(visti).length}
         onPress={() => navigation.navigate('Mappa')}
       />
 
