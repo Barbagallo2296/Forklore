@@ -22,6 +22,9 @@ import { isPreferito, toggleFavorito } from '../data/preferiti';
 import { segnaVisto } from '../data/visti';
 import { REGIONI, TUTTI_I_PIATTI, nomeVisibile, trovaRegioneDelPiatto } from '../data/regioni';
 import Skeleton from '../components/Skeleton';
+import AzioniPiatto from '../components/AzioniPiatto';
+import RicettaCard from '../components/RicettaCard';
+import { ricettaQuery } from '../data/ricette';
 import ImmagineDissolvenza from '../components/ImmagineDissolvenza';
 import StatoVuoto from '../components/StatoVuoto';
 import { ombra } from '../components/Card';
@@ -51,6 +54,8 @@ export default function DettaglioPiattoScreen() {
   }, [piattoNome]);
 
   const { data, isLoading, isError } = useQuery(wikipediaQuery(piattoNome));
+  // Stessa query della RicettaCard: qui serve solo per il link nella condivisione
+  const { data: ricetta } = useQuery(ricettaQuery(piattoNome));
 
   // I piatti fuori dai 10 tipici (province, altri da Wikipedia) arrivano con regioneId
   const regioneDaParametri =
@@ -90,6 +95,9 @@ export default function DettaglioPiattoScreen() {
     ];
     if (data.url) {
       righe.push('', `Scopri di più: ${data.url}`);
+    }
+    if (ricetta) {
+      righe.push(`Ricetta: ${ricetta.url}`);
     }
     righe.push('', 'Condiviso da Forklore');
     Share.share({ title: nomeVisibile(data.title), message: righe.join('\n') });
@@ -189,6 +197,9 @@ export default function DettaglioPiattoScreen() {
           <View style={[styles.divider, { backgroundColor: colors.primary }]} />
           <Text style={[testo.corpo, { color: colors.textPrimary }]}>{data.extract}</Text>
 
+          <AzioniPiatto nomePiatto={piattoNome} />
+          <RicettaCard nomePiatto={piattoNome} />
+
           {data.url && (
             <TouchableOpacity
               style={[styles.bottoneWiki, { backgroundColor: colors.primary }]}
@@ -203,7 +214,9 @@ export default function DettaglioPiattoScreen() {
           )}
 
           <Text style={[styles.fonte, { color: colors.textTertiary }]}>
-            Testo e immagini da Wikipedia
+            {ricetta
+              ? 'Testo e immagini da Wikipedia, ricetta da Wikibooks'
+              : 'Testo e immagini da Wikipedia'}
           </Text>
 
           {piattoInfo && piattiCollegati.length > 0 && (

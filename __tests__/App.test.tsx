@@ -8,6 +8,7 @@ import App, { queryClient } from '../App';
 import { cercaPiatti, NUMERO_PIATTI_UNICI } from '../src/data/regioni';
 import { calcolaProgresso, contaConquistate, filtraCurati } from '../src/data/visti';
 import { filtraPiatti } from '../src/data/wikipedia';
+import { leggiRicetta } from '../src/data/ricette';
 
 // TanStack Query pianifica la pulizia della cache con un timer reale di 5 minuti
 // che terrebbe Jest aperto: nei test la disattiviamo (gcTime infinito)
@@ -74,4 +75,45 @@ test('gli altri piatti da Wikipedia escludono vini, oli e doppioni', () => {
     { title: 'Befanini', description: 'prodotto da forno' },
   ];
   expect(filtraPiatti(pagine, new Set(['Ribollita']))).toEqual(['Befanini', 'Fagioli a olio']);
+});
+
+test('la ricetta di Wikibooks viene letta e ripulita dalla sintassi wiki', () => {
+  const wikitext = [
+    '{{Interprogetto|w=Pasta alla carbonara}}',
+    '==Ingredienti==',
+    "per '''2''' persone:",
+    '* 125 g di [[w:guanciale|guanciale]]',
+    "* 3-4 tuorli d'uovo",
+    '==Preparazione==',
+    '#Tagliare il guanciale a tocchetti<ref>Nota da togliere</ref>.',
+    '#Cuocere gli spaghetti al dente.',
+    '== Altri progetti ==',
+    '* da non includere',
+  ].join('\n');
+
+  expect(leggiRicetta(wikitext)).toEqual({
+    porzioni: '2',
+    ingredienti: ['125 g di guanciale', "3-4 tuorli d'uovo"],
+    passaggi: ['Tagliare il guanciale a tocchetti.', 'Cuocere gli spaghetti al dente.'],
+  });
+});
+
+test('le sezioni di terzo livello e la preparazione a paragrafi vengono lette', () => {
+  const wikitext = [
+    '== Ricetta ==',
+    '=== Ingredienti ===',
+    'Per circa 6/7 persone:',
+    '* melanzane',
+    '=== Preparazione ===',
+    'Si friggono le melanzane.',
+    '',
+    'Si compone la teglia.',
+  ].join('\n');
+
+  expect(leggiRicetta(wikitext)).toEqual({
+    porzioni: '6/7',
+    ingredienti: ['melanzane'],
+    passaggi: ['Si friggono le melanzane.', 'Si compone la teglia.'],
+  });
+  expect(leggiRicetta('Solo testo, nessuna ricetta.')).toBeNull();
 });
