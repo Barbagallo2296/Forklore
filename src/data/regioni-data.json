@@ -111,7 +111,7 @@
     "id": "valle-aosta",
     "nome": "Valle d'Aosta",
     "categoria": "Cucina valdostana",
-    "piatti": ["Fonduta valdostana", "Ciaramicola", "Polenta concia", "Cotoletta alla valdostana", "Mocetta", "Fontina", "Lardo di Arnad", "Boudin (insaccato)", "Tegole", "Jambon de Bosses"]
+    "piatti": ["Fonduta valdostana", "Mécoulin", "Polenta concia", "Cotoletta alla valdostana", "Mocetta", "Fontina", "Lardo di Arnad", "Boudin (insaccato)", "Tegole", "Jambon de Bosses"]
   },
   {
     "id": "veneto",
