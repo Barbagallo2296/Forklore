@@ -3,13 +3,17 @@ import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { List, Map } from 'lucide-react-native';
 import RegioniScreen from './RegioniScreen';
 import MappaItaliaScreen from './MappaItaliaScreen';
+import ComparsaAnimata from '../components/ComparsaAnimata';
 import { useTheme } from '../theme/ThemeContext';
+import { font } from '../theme/tipografia';
 
 type Vista = 'lista' | 'mappa';
 
 export default function RegioniHomeScreen() {
   const [vista, setVista] = useState<Vista>('lista');
   const { colors } = useTheme();
+  const coloreLista = vista === 'lista' ? colors.onPrimary : colors.textSecondary;
+  const coloreMappa = vista === 'mappa' ? colors.onPrimary : colors.textSecondary;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -19,8 +23,8 @@ export default function RegioniHomeScreen() {
           onPress={() => setVista('lista')}
           activeOpacity={0.7}
         >
-          <List size={16} color={vista === 'lista' ? '#ffffff' : colors.textSecondary} />
-          <Text style={[styles.opzioneTesto, { color: vista === 'lista' ? '#ffffff' : colors.textSecondary }]}>
+          <List size={16} color={coloreLista} />
+          <Text style={[styles.opzioneTesto, { color: coloreLista }]}>
             Lista
           </Text>
         </TouchableOpacity>
@@ -29,16 +33,16 @@ export default function RegioniHomeScreen() {
           onPress={() => setVista('mappa')}
           activeOpacity={0.7}
         >
-          <Map size={16} color={vista === 'mappa' ? '#ffffff' : colors.textSecondary} />
-          <Text style={[styles.opzioneTesto, { color: vista === 'mappa' ? '#ffffff' : colors.textSecondary }]}>
+          <Map size={16} color={coloreMappa} />
+          <Text style={[styles.opzioneTesto, { color: coloreMappa }]}>
             Mappa
           </Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.content}>
+      <ComparsaAnimata key={vista} style={styles.content}>
         {vista === 'lista' ? <RegioniScreen /> : <MappaItaliaScreen />}
-      </View>
+      </ComparsaAnimata>
     </View>
   );
 }
@@ -49,8 +53,10 @@ const styles = StyleSheet.create({
   },
   selector: {
     flexDirection: 'row',
-    margin: 12,
-    borderRadius: 10,
+    marginHorizontal: 16,
+    marginTop: 4,
+    marginBottom: 12,
+    borderRadius: 14,
     borderWidth: 1,
     padding: 3,
   },
@@ -60,12 +66,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 11,
     gap: 6,
   },
   opzioneTesto: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: font.semibold,
   },
   content: {
     flex: 1,

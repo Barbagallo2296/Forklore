@@ -15,8 +15,10 @@ import { RotateCcw } from 'lucide-react-native';
 import { REGIONI_PATHS, MAPPA_VIEWBOX } from '../data/mappaItaliaPaths';
 import { ETICHETTE_MAPPA } from '../data/mappaEtichette';
 import { REGIONI } from '../data/regioni';
-import { getVisti } from '../data/visti';
+import { getVisti, calcolaProgresso, contaConquistate } from '../data/visti';
+import { ombra } from '../components/Card';
 import { useTheme } from '../theme/ThemeContext';
+import { font } from '../theme/tipografia';
 import type { RegioniStackParamList } from '../navigation/AppNavigator';
 
 type NavigationProp = NativeStackNavigationProp<RegioniStackParamList, 'Regioni'>;
@@ -49,16 +51,8 @@ export default function MappaItaliaScreen() {
   );
 
   // Percentuale di piatti visti per ogni regione (da 0 a 1)
-  const progresso = useMemo(() => {
-    const risultato: Record<string, number> = {};
-    for (const regione of REGIONI) {
-      const vistiRegione = regione.piatti.filter((p) => visti.includes(p.nome)).length;
-      risultato[regione.id] = vistiRegione / regione.piatti.length;
-    }
-    return risultato;
-  }, [visti]);
-
-  const conquistate = Object.values(progresso).filter((p) => p === 1).length;
+  const progresso = useMemo(() => calcolaProgresso(visti), [visti]);
+  const conquistate = contaConquistate(progresso);
   const nomeRegioneAttiva = REGIONI.find((r) => r.id === regioneAttiva)?.nome;
 
   // --- Zoom e spostamento ---
@@ -186,7 +180,7 @@ export default function MappaItaliaScreen() {
                   d={regione.d}
                   fill={colorata ? colors.primary : colors.card}
                   fillOpacity={attiva ? 1 : percentuale > 0 ? 0.2 + percentuale * 0.8 : 1}
-                  stroke={colors.textSecondary}
+                  stroke={colors.textTertiary}
                   strokeWidth={0.8}
                   onPressIn={() => setRegioneAttiva(regione.id)}
                   onPress={() => {
@@ -209,7 +203,7 @@ export default function MappaItaliaScreen() {
                     x={etichetta.x}
                     y={etichetta.y}
                     fontSize={7}
-                    fontWeight="600"
+                    fontFamily={font.semibold}
                     fill={colors.textPrimary}
                     textAnchor="middle"
                     pointerEvents="none"
@@ -246,7 +240,8 @@ export default function MappaItaliaScreen() {
           <View
             style={[
               styles.quadratino,
-              { backgroundColor: colors.primary, opacity: 0.45, borderColor: colors.textSecondary },
+              styles.quadratinoInCorso,
+              { backgroundColor: colors.primary, borderColor: colors.textSecondary },
             ]}
           />
           <Text style={[styles.legendaTesto, { color: colors.textSecondary }]}>In corso</Text>
@@ -278,7 +273,7 @@ const styles = StyleSheet.create({
   },
   contatore: {
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: font.semibold,
     marginBottom: 8,
   },
   svgWrapper: {
@@ -299,11 +294,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
+    ...ombra,
   },
   legenda: {
     flexDirection: 'row',
@@ -323,11 +314,16 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     borderWidth: 0.5,
   },
+  quadratinoInCorso: {
+    opacity: 0.45,
+  },
   legendaTesto: {
+    fontFamily: font.regular,
     fontSize: 12,
   },
   hint: {
     marginTop: 8,
+    fontFamily: font.regular,
     fontSize: 14,
     textAlign: 'center',
   },
