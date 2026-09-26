@@ -59,18 +59,22 @@ export function wikipediaQuery(titoloPagina: string) {
   });
 }
 
-const LARGHEZZA_HERO = 960;
+// Larghezze standard di Wikimedia: 960 per le foto a tutto schermo, 500 per le card
+export type LarghezzaImmagine = 500 | 960;
 
 // URL di un'immagine abbastanza grande per occupare tutta la larghezza dello schermo.
-// Wikimedia genera miniature solo in alcune larghezze standard (tra cui 960px):
+// Wikimedia genera miniature solo in alcune larghezze standard (tra cui 500 e 960px):
 // si parte dalla miniatura e si cambia la larghezza nell'URL.
-export function immagineHero(summary: WikipediaSummary): string | undefined {
+export function immagineHero(
+  summary: WikipediaSummary,
+  larghezza: LarghezzaImmagine = 960,
+): string | undefined {
   const { thumbnail, originalimage } = summary;
-  if (originalimage && originalimage.width <= LARGHEZZA_HERO) {
+  if (originalimage && originalimage.width <= larghezza) {
     return originalimage.source;
   }
   if (thumbnail && /\/\d+px-/.test(thumbnail.source)) {
-    return thumbnail.source.replace(/\/\d+px-/, `/${LARGHEZZA_HERO}px-`);
+    return thumbnail.source.replace(/\/\d+px-/, `/${larghezza}px-`);
   }
   return thumbnail?.source ?? originalimage?.source;
 }

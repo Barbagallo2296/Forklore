@@ -3,11 +3,11 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
-import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import { Sparkles } from 'lucide-react-native';
 import { getPiattoDelGiorno, nomeVisibile } from '../data/regioni';
 import { wikipediaQuery, immagineHero } from '../data/wikipedia';
 import ImmagineDissolvenza from './ImmagineDissolvenza';
+import Sfumatura from './Sfumatura';
 import { ombra } from './Card';
 import { useTheme } from '../theme/ThemeContext';
 import { font } from '../theme/tipografia';
@@ -38,15 +38,7 @@ export default function PiattoDelGiorno() {
       )}
 
       {/* Sfumatura scura in basso per rendere leggibile il testo sopra la foto */}
-      <Svg style={StyleSheet.absoluteFill} width="100%" height="100%" pointerEvents="none">
-        <Defs>
-          <LinearGradient id="sfumatura" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0.35" stopColor="#000000" stopOpacity="0" />
-            <Stop offset="1" stopColor="#000000" stopOpacity="0.75" />
-          </LinearGradient>
-        </Defs>
-        <Rect width="100%" height="100%" fill="url(#sfumatura)" />
-      </Svg>
+      <Sfumatura />
 
       <View style={[styles.etichetta, { backgroundColor: colors.primary }]}>
         <Sparkles size={12} color={colors.onPrimary} />

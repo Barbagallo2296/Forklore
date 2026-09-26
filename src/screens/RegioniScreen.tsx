@@ -136,6 +136,8 @@ export default function RegioniScreen() {
         {inCorso.length > 0 ? 'Continua a esplorare' : 'Da dove iniziare'}
       </Text>
       <ScrollView
+        // Se cambiano le regioni (es. dopo un reset) il carosello riparte dall'inizio
+        key={carosello.map((r) => r.id).join()}
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.carosello}

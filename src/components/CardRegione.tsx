@@ -1,8 +1,19 @@
 import React, { memo } from 'react';
-import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
+import { useQuery } from '@tanstack/react-query';
 import { Check } from 'lucide-react-native';
-import Card from './Card';
+import { ombra } from './Card';
+import ImmagineDissolvenza from './ImmagineDissolvenza';
 import SagomaRegione from './SagomaRegione';
+import Sfumatura from './Sfumatura';
+import { wikipediaQuery, immagineHero } from '../data/wikipedia';
 import { useTheme } from '../theme/ThemeContext';
 import { font } from '../theme/tipografia';
 import type { Regione } from '../data/regioni';
@@ -18,60 +29,80 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
+// Card di una regione con la foto del suo primo piatto tipico come sfondo.
 // memo: la home ne mostra 20 e non serve ridisegnarle se progresso e tema non cambiano
 function CardRegione({ regione, progresso, onPress, compatta = false, style }: Props) {
   const { colors } = useTheme();
+  const { data } = useQuery(wikipediaQuery(regione.piatti[0].nome));
+  const foto = data ? immagineHero(data, 500) : undefined;
+
   const totale = regione.piatti.length;
   const scoperti = Math.round(progresso * totale);
   const conquistata = progresso === 1;
-  const coloreProgresso = conquistata ? colors.secondary : colors.primary;
 
   return (
-    <Card
-      style={[styles.card, compatta && styles.cardCompatta, style]}
+    <TouchableOpacity
+      style={[
+        styles.card,
+        compatta ? styles.cardCompatta : styles.cardGriglia,
+        { backgroundColor: colors.placeholder },
+        style,
+      ]}
       onPress={() => onPress(regione.id)}
+      activeOpacity={0.85}
     >
-      <View
-        style={[
-          styles.sagoma,
-          compatta && styles.sagomaCompatta,
-          { backgroundColor: colors.background },
-        ]}
-      >
-        <SagomaRegione regioneId={regione.id} progresso={progresso} size={compatta ? 48 : 60} />
-        {conquistata && (
+      {foto ? (
+        <>
+          <ImmagineDissolvenza uri={foto} style={StyleSheet.absoluteFill} />
+          <Sfumatura inizio={0.3} intensita={0.8} />
+        </>
+      ) : (
+        // Senza foto (caricamento o pagina senza immagine) resta la sagoma grande
+        <View style={[StyleSheet.absoluteFill, styles.segnaposto]}>
+          <SagomaRegione regioneId={regione.id} progresso={progresso} size={compatta ? 56 : 72} />
+        </View>
+      )}
+
+      <View style={styles.inAlto}>
+        {conquistata ? (
           <View style={[styles.badge, { backgroundColor: colors.secondary }]}>
-            <Check size={12} color={colors.onPrimary} strokeWidth={3} />
+            <Check size={14} color={colors.onPrimary} strokeWidth={3} />
+          </View>
+        ) : (
+          <View />
+        )}
+        {foto && (
+          <View style={styles.sagomaAngolo}>
+            <SagomaRegione regioneId={regione.id} progresso={progresso} size={compatta ? 24 : 30} />
           </View>
         )}
       </View>
 
-      <Text
-        style={[styles.nome, compatta && styles.nomeCompatto, { color: colors.textPrimary }]}
-        numberOfLines={1}
-      >
-        {regione.nome}
-      </Text>
-
-      <View style={styles.progressoRiga}>
-        <View style={[styles.barra, { backgroundColor: colors.placeholder }]}>
-          <View
-            style={[
-              styles.barraPiena,
-              { width: `${progresso * 100}%`, backgroundColor: coloreProgresso },
-            ]}
-          />
-        </View>
+      <View style={styles.testi}>
         <Text
-          style={[
-            styles.progressoTesto,
-            { color: conquistata ? colors.secondary : colors.textSecondary },
-          ]}
+          style={[styles.nome, compatta && styles.nomeCompatto, !foto && { color: colors.textPrimary }]}
+          numberOfLines={1}
         >
-          {scoperti}/{totale}
+          {regione.nome}
         </Text>
+        <View style={styles.progressoRiga}>
+          <View style={[styles.barra, !foto && { backgroundColor: colors.border }]}>
+            <View
+              style={[
+                styles.barraPiena,
+                {
+                  width: `${progresso * 100}%`,
+                  backgroundColor: conquistata ? colors.secondary : colors.primary,
+                },
+              ]}
+            />
+          </View>
+          <Text style={[styles.progressoTesto, !foto && { color: colors.textSecondary }]}>
+            {scoperti}/{totale}
+          </Text>
+        </View>
       </View>
-    </Card>
+    </TouchableOpacity>
   );
 }
 
@@ -79,37 +110,53 @@ export default memo(CardRegione);
 
 const styles = StyleSheet.create({
   card: {
-    padding: 10,
+    borderRadius: 16,
+    overflow: 'hidden',
+    justifyContent: 'space-between',
+    ...ombra,
+  },
+  cardGriglia: {
+    height: 172,
   },
   cardCompatta: {
-    width: 132,
+    width: 140,
+    height: 150,
   },
-  sagoma: {
-    height: 76,
+  segnaposto: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 36,
+  },
+  inAlto: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 8,
+  },
+  badge: {
+    width: 24,
+    height: 24,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
   },
-  sagomaCompatta: {
-    height: 64,
-  },
-  badge: {
-    position: 'absolute',
-    top: 6,
-    right: 6,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+  sagomaAngolo: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.88)',
     justifyContent: 'center',
     alignItems: 'center',
   },
+  testi: {
+    padding: 10,
+  },
   nome: {
     fontFamily: font.titolo,
-    fontSize: 16,
+    fontSize: 17,
+    color: '#FFFFFF',
   },
   nomeCompatto: {
-    fontSize: 14,
+    fontSize: 15,
   },
   progressoRiga: {
     flexDirection: 'row',
@@ -122,6 +169,7 @@ const styles = StyleSheet.create({
     height: 5,
     borderRadius: 3,
     overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   barraPiena: {
     height: '100%',
@@ -130,5 +178,6 @@ const styles = StyleSheet.create({
   progressoTesto: {
     fontFamily: font.bold,
     fontSize: 12,
+    color: '#FFFFFF',
   },
 });
