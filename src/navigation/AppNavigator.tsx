@@ -16,7 +16,8 @@ import { MapPin, Heart, Sun, Moon, CircleUser } from 'lucide-react-native';
 import PiattiRegioneScreen from '../screens/PiattiRegioneScreen';
 import DettaglioPiattoScreen from '../screens/DettaglioPiattoScreen';
 import PreferitiScreen from '../screens/PreferitiScreen';
-import RegioniHomeScreen from '../screens/RegioniHomeScreen';
+import RegioniScreen from '../screens/RegioniScreen';
+import MappaItaliaScreen from '../screens/MappaItaliaScreen';
 import ProfiloScreen from '../screens/ProfiloScreen';
 import LoginScreen from '../screens/LoginScreen';
 import { useTheme } from '../theme/ThemeContext';
@@ -28,6 +29,7 @@ type DettaglioParams = { piattoNome: string };
 
 export type RegioniStackParamList = {
   Regioni: undefined;
+  Mappa: undefined;
   PiattiRegione: { regioneId: string };
   DettaglioPiatto: DettaglioParams;
 };
@@ -124,8 +126,13 @@ function RegioniStackNavigator() {
     <RegioniStack.Navigator screenOptions={{ ...opzioniHeader, headerRight: headerTema }}>
       <RegioniStack.Screen
         name="Regioni"
-        component={RegioniHomeScreen}
+        component={RegioniScreen}
         options={{ title: 'Forklore' }}
+      />
+      <RegioniStack.Screen
+        name="Mappa"
+        component={MappaItaliaScreen}
+        options={{ title: 'La tua Italia' }}
       />
       <RegioniStack.Screen
         name="PiattiRegione"

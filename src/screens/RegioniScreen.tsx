@@ -1,15 +1,23 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ChevronRight, Search, X } from 'lucide-react-native';
+import { Search, X } from 'lucide-react-native';
 import { REGIONI, cercaPiatti } from '../data/regioni';
 import { getVisti, calcolaProgresso, contaConquistate } from '../data/visti';
 import PiattoDelGiorno from '../components/PiattoDelGiorno';
+import AnteprimaMappa from '../components/AnteprimaMappa';
+import CardRegione from '../components/CardRegione';
 import ComparsaAnimata from '../components/ComparsaAnimata';
-import Card from '../components/Card';
 import RigaPiatto from '../components/RigaPiatto';
-import SagomaRegione from '../components/SagomaRegione';
 import StatoVuoto from '../components/StatoVuoto';
 import { useTheme } from '../theme/ThemeContext';
 import { font, testo } from '../theme/tipografia';
@@ -36,6 +44,13 @@ export default function RegioniScreen() {
   const staCercando = ricerca.trim().length > 0;
   const risultati = staCercando ? cercaPiatti(ricerca) : [];
 
+  // Regioni iniziate ma non ancora conquistate, dalla più avanti
+  const inCorso = REGIONI.filter((r) => progresso[r.id] > 0 && progresso[r.id] < 1).sort(
+    (a, b) => progresso[b.id] - progresso[a.id],
+  );
+
+  const apriRegione = (regioneId: string) => navigation.navigate('PiattiRegione', { regioneId });
+
   const barraRicerca = (
     <View style={[styles.ricerca, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <Search size={18} color={colors.textTertiary} />
@@ -56,11 +71,61 @@ export default function RegioniScreen() {
     </View>
   );
 
-  if (staCercando) {
-    return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        {barraRicerca}
+  const intestazione = (
+    <>
+      <View style={styles.saluto}>
+        <Text style={[testo.titoloGrande, { color: colors.textPrimary }]}>Ciao, {nome} 👋</Text>
+        <Text style={[styles.salutoSottotitolo, { color: colors.textSecondary }]}>
+          {conquistate > 0
+            ? `Hai conquistato ${conquistate} ${conquistate === 1 ? 'regione' : 'regioni'} su ${REGIONI.length}. Cosa assaggiamo oggi?`
+            : 'Cosa assaggiamo oggi?'}
+        </Text>
+      </View>
+
+      <PiattoDelGiorno />
+
+      <AnteprimaMappa
+        progresso={progresso}
+        piattiScoperti={visti.length}
+        onPress={() => navigation.navigate('Mappa')}
+      />
+
+      {inCorso.length > 0 && (
+        <>
+          <Text style={[testo.titoloSezione, styles.titoloSezione, { color: colors.textPrimary }]}>
+            Continua a esplorare
+          </Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.carosello}
+            contentContainerStyle={styles.caroselloContenuto}
+          >
+            {inCorso.map((regione) => (
+              <CardRegione
+                key={regione.id}
+                regione={regione}
+                progresso={progresso[regione.id]}
+                onPress={() => apriRegione(regione.id)}
+                compatta
+              />
+            ))}
+          </ScrollView>
+        </>
+      )}
+
+      <Text style={[testo.titoloSezione, styles.titoloSezione, { color: colors.textPrimary }]}>
+        Tutte le regioni
+      </Text>
+    </>
+  );
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      {barraRicerca}
+      {staCercando ? (
         <FlatList
+          key="risultati"
           data={risultati}
           keyExtractor={(item) => `${item.regioneId}-${item.nome}`}
           contentContainerStyle={styles.listContent}
@@ -90,81 +155,27 @@ export default function RegioniScreen() {
             </ComparsaAnimata>
           )}
         />
-      </View>
-    );
-  }
-
-  return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {barraRicerca}
-      <FlatList
-        data={REGIONI}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        keyboardShouldPersistTaps="handled"
-        ListHeaderComponent={
-          <>
-            <View style={styles.saluto}>
-              <Text style={[testo.titoloGrande, { color: colors.textPrimary }]}>
-                Ciao, {nome} 👋
-              </Text>
-              <Text style={[styles.salutoSottotitolo, { color: colors.textSecondary }]}>
-                {conquistate > 0
-                  ? `Hai conquistato ${conquistate} ${conquistate === 1 ? 'regione' : 'regioni'} su ${REGIONI.length}. Cosa assaggiamo oggi?`
-                  : 'Cosa assaggiamo oggi?'}
-              </Text>
-            </View>
-            <PiattoDelGiorno />
-            <Text style={[testo.titoloSezione, styles.titoloSezione, { color: colors.textPrimary }]}>
-              Le regioni
-            </Text>
-          </>
-        }
-        renderItem={({ item, index }) => {
-          const percentuale = progresso[item.id] ?? 0;
-          const scoperti = Math.round(percentuale * item.piatti.length);
-          const conquistata = percentuale === 1;
-          return (
-            <ComparsaAnimata indice={index}>
-              <Card
-                style={styles.card}
-                onPress={() => navigation.navigate('PiattiRegione', { regioneId: item.id })}
-              >
-                <View style={[styles.sagoma, { backgroundColor: colors.background }]}>
-                  <SagomaRegione regioneId={item.id} progresso={percentuale} />
-                </View>
-                <View style={styles.cardTextWrap}>
-                  <Text style={[styles.nomeRegione, { color: colors.textPrimary }]}>
-                    {item.nome}
-                  </Text>
-                  <View style={styles.progressoRiga}>
-                    <View style={[styles.barra, { backgroundColor: colors.placeholder }]}>
-                      <View
-                        style={[
-                          styles.barraPiena,
-                          {
-                            width: `${percentuale * 100}%`,
-                            backgroundColor: conquistata ? colors.secondary : colors.primary,
-                          },
-                        ]}
-                      />
-                    </View>
-                    <Text
-                      style={[
-                        styles.progressoTesto,
-                        { color: conquistata ? colors.secondary : colors.textSecondary },
-                      ]}
-                    >
-                      {conquistata ? 'Conquistata' : `${scoperti}/${item.piatti.length}`}
-                    </Text>
-                  </View>
-                </View>
-                <ChevronRight color={colors.chevron} size={20} />
-              </Card>
+      ) : (
+        <FlatList
+          key="griglia"
+          data={REGIONI}
+          numColumns={2}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+          columnWrapperStyle={styles.rigaGriglia}
+          keyboardShouldPersistTaps="handled"
+          ListHeaderComponent={intestazione}
+          renderItem={({ item, index }) => (
+            <ComparsaAnimata indice={index} style={styles.cellaGriglia}>
+              <CardRegione
+                regione={item}
+                progresso={progresso[item.id] ?? 0}
+                onPress={() => apriRegione(item.id)}
+              />
             </ComparsaAnimata>
-          );
-        }}
-      />
+          )}
+        />
+      )}
     </View>
   );
 }
@@ -178,6 +189,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     marginHorizontal: 16,
+    marginTop: 4,
     marginBottom: 4,
     paddingHorizontal: 14,
     borderRadius: 14,
@@ -205,53 +217,26 @@ const styles = StyleSheet.create({
   titoloSezione: {
     marginBottom: 12,
   },
+  // Il carosello esce dai margini della lista per scorrere fino al bordo dello schermo
+  carosello: {
+    marginHorizontal: -16,
+    marginBottom: 24,
+  },
+  caroselloContenuto: {
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    gap: 10,
+  },
+  rigaGriglia: {
+    gap: 10,
+  },
+  cellaGriglia: {
+    flex: 1,
+    marginBottom: 10,
+  },
   contaRisultati: {
     fontFamily: font.semibold,
     fontSize: 13,
     marginBottom: 10,
-  },
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    marginBottom: 10,
-  },
-  sagoma: {
-    width: 56,
-    height: 56,
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 14,
-  },
-  cardTextWrap: {
-    flex: 1,
-    marginRight: 8,
-  },
-  nomeRegione: {
-    fontFamily: font.titolo,
-    fontSize: 18,
-  },
-  progressoRiga: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 6,
-  },
-  barra: {
-    flex: 1,
-    height: 6,
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  barraPiena: {
-    height: '100%',
-    borderRadius: 3,
-  },
-  progressoTesto: {
-    fontFamily: font.bold,
-    fontSize: 12,
-    minWidth: 34,
-    textAlign: 'right',
   },
 });

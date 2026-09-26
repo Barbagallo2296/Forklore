@@ -21,7 +21,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { font } from '../theme/tipografia';
 import type { RegioniStackParamList } from '../navigation/AppNavigator';
 
-type NavigationProp = NativeStackNavigationProp<RegioniStackParamList, 'Regioni'>;
+type NavigationProp = NativeStackNavigationProp<RegioniStackParamList, 'Mappa'>;
 
 const ZOOM_MIN = 1;
 const ZOOM_MAX = 4;
