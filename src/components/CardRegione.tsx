@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import { Check } from 'lucide-react-native';
 import Card from './Card';
 import SagomaRegione from './SagomaRegione';
 import { useTheme } from '../theme/ThemeContext';
@@ -10,13 +11,15 @@ type Props = {
   regione: Regione;
   // Percentuale di piatti scoperti (da 0 a 1)
   progresso: number;
-  onPress: () => void;
-  // Versione più piccola, per il carosello "Continua a esplorare"
+  // Riceve l'id della regione: così chi usa la card può passare sempre la stessa funzione
+  onPress: (regioneId: string) => void;
+  // Versione più piccola, per il carosello
   compatta?: boolean;
   style?: StyleProp<ViewStyle>;
 };
 
-export default function CardRegione({ regione, progresso, onPress, compatta = false, style }: Props) {
+// memo: la home ne mostra 20 e non serve ridisegnarle se progresso e tema non cambiano
+function CardRegione({ regione, progresso, onPress, compatta = false, style }: Props) {
   const { colors } = useTheme();
   const totale = regione.piatti.length;
   const scoperti = Math.round(progresso * totale);
@@ -24,7 +27,10 @@ export default function CardRegione({ regione, progresso, onPress, compatta = fa
   const coloreProgresso = conquistata ? colors.secondary : colors.primary;
 
   return (
-    <Card style={[styles.card, compatta && styles.cardCompatta, style]} onPress={onPress}>
+    <Card
+      style={[styles.card, compatta && styles.cardCompatta, style]}
+      onPress={() => onPress(regione.id)}
+    >
       <View
         style={[
           styles.sagoma,
@@ -32,7 +38,12 @@ export default function CardRegione({ regione, progresso, onPress, compatta = fa
           { backgroundColor: colors.background },
         ]}
       >
-        <SagomaRegione regioneId={regione.id} progresso={progresso} size={compatta ? 48 : 72} />
+        <SagomaRegione regioneId={regione.id} progresso={progresso} size={compatta ? 48 : 60} />
+        {conquistata && (
+          <View style={[styles.badge, { backgroundColor: colors.secondary }]}>
+            <Check size={12} color={colors.onPrimary} strokeWidth={3} />
+          </View>
+        )}
       </View>
 
       <Text
@@ -57,31 +68,41 @@ export default function CardRegione({ regione, progresso, onPress, compatta = fa
             { color: conquistata ? colors.secondary : colors.textSecondary },
           ]}
         >
-          {conquistata ? '✓' : `${scoperti}/${totale}`}
+          {scoperti}/{totale}
         </Text>
       </View>
     </Card>
   );
 }
 
+export default memo(CardRegione);
+
 const styles = StyleSheet.create({
   card: {
-    padding: 12,
+    padding: 10,
   },
   cardCompatta: {
     width: 132,
-    padding: 10,
   },
   sagoma: {
-    height: 96,
+    height: 76,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   sagomaCompatta: {
     height: 64,
-    marginBottom: 8,
+  },
+  badge: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   nome: {
     fontFamily: font.titolo,

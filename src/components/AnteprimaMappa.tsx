@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { ChevronRight } from 'lucide-react-native';
@@ -16,9 +16,11 @@ type Props = {
 };
 
 // Card "La tua Italia": mappa in miniatura colorata con i progressi, apre la mappa completa
-export default function AnteprimaMappa({ progresso, piattiScoperti, onPress }: Props) {
+// memo: la mappa ha 20 tracciati SVG, la ridisegniamo solo quando cambiano i progressi
+function AnteprimaMappa({ progresso, piattiScoperti, onPress }: Props) {
   const { colors } = useTheme();
   const conquistate = contaConquistate(progresso);
+  const daIniziare = piattiScoperti === 0;
 
   return (
     <Card style={styles.card} onPress={onPress}>
@@ -30,10 +32,10 @@ export default function AnteprimaMappa({ progresso, piattiScoperti, onPress }: P
               <Path
                 key={regione.id}
                 d={regione.d}
-                fill={percentuale > 0 ? colors.primary : colors.card}
-                fillOpacity={percentuale > 0 ? 0.2 + percentuale * 0.8 : 1}
+                fill={percentuale > 0 ? colors.primary : colors.placeholder}
+                fillOpacity={percentuale > 0 ? 0.25 + percentuale * 0.75 : 1}
                 stroke={colors.textTertiary}
-                strokeWidth={1.5}
+                strokeWidth={1.2}
               />
             );
           })}
@@ -42,16 +44,26 @@ export default function AnteprimaMappa({ progresso, piattiScoperti, onPress }: P
 
       <View style={styles.testi}>
         <Text style={[testo.titoloSezione, { color: colors.textPrimary }]}>La tua Italia</Text>
-        <Text style={[styles.numero, { color: colors.primary }]}>
-          {conquistate}
-          <Text style={[styles.numeroTotale, { color: colors.textTertiary }]}>/{REGIONI.length}</Text>
-        </Text>
-        <Text style={[styles.etichetta, { color: colors.textSecondary }]}>
-          regioni conquistate
-        </Text>
-        <Text style={[styles.etichetta, { color: colors.textSecondary }]}>
-          {piattiScoperti} di {NUMERO_PIATTI_UNICI} piatti scoperti
-        </Text>
+        {daIniziare ? (
+          <Text style={[styles.invito, { color: colors.textSecondary }]}>
+            Apri il tuo primo piatto: ogni regione si colora man mano che ne scopri la cucina.
+          </Text>
+        ) : (
+          <>
+            <Text style={[styles.numero, { color: colors.primary }]}>
+              {conquistate}
+              <Text style={[styles.numeroTotale, { color: colors.textTertiary }]}>
+                /{REGIONI.length}
+              </Text>
+            </Text>
+            <Text style={[styles.etichetta, { color: colors.textSecondary }]}>
+              regioni conquistate
+            </Text>
+            <Text style={[styles.etichetta, { color: colors.textSecondary }]}>
+              {piattiScoperti} di {NUMERO_PIATTI_UNICI} piatti scoperti
+            </Text>
+          </>
+        )}
         <View style={styles.apri}>
           <Text style={[styles.apriTesto, { color: colors.primary }]}>Apri la mappa</Text>
           <ChevronRight size={16} color={colors.primary} />
@@ -68,7 +80,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   mappa: {
-    width: 128,
+    width: 140,
     aspectRatio: 500 / 620,
     borderRadius: 12,
     padding: 6,
@@ -87,6 +99,12 @@ const styles = StyleSheet.create({
     fontFamily: font.bold,
     fontSize: 18,
   },
+  invito: {
+    fontFamily: font.regular,
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 6,
+  },
   etichetta: {
     fontFamily: font.regular,
     fontSize: 13,
@@ -101,3 +119,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
+
+export default memo(AnteprimaMappa);

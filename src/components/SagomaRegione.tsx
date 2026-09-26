@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import Svg, { Path } from 'react-native-svg';
 import { REGIONI_PATHS } from '../data/mappaItaliaPaths';
 import { useTheme } from '../theme/ThemeContext';
@@ -38,7 +38,7 @@ const SAGOME: Record<string, Sagoma> = Object.fromEntries(
   REGIONI_PATHS.map((r) => [r.id, calcolaSagoma(r.d)]),
 );
 
-export default function SagomaRegione({ regioneId, progresso, size = 44 }: Props) {
+function SagomaRegione({ regioneId, progresso, size = 44 }: Props) {
   const { colors } = useTheme();
   const sagoma = SAGOME[regioneId];
   if (!sagoma) {
@@ -58,3 +58,5 @@ export default function SagomaRegione({ regioneId, progresso, size = 44 }: Props
     </Svg>
   );
 }
+
+export default memo(SagomaRegione);

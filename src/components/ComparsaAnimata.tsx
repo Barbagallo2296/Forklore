@@ -5,23 +5,30 @@ type Props = {
   children: React.ReactNode;
   // Posizione nella lista: gli elementi compaiono uno dopo l'altro
   indice?: number;
+  // false = compare subito, senza animazione (es. card rimontate durante lo scroll)
+  animata?: boolean;
   style?: StyleProp<ViewStyle>;
 };
 
 const RITARDO_PER_ELEMENTO = 40;
 const RITARDO_MASSIMO = 400;
 
-export default function ComparsaAnimata({ children, indice = 0, style }: Props) {
-  const progresso = useRef(new Animated.Value(0)).current;
+export default function ComparsaAnimata({ children, indice = 0, animata = true, style }: Props) {
+  const progresso = useRef(new Animated.Value(animata ? 0 : 1)).current;
 
   useEffect(() => {
+    if (!animata) {
+      return;
+    }
     Animated.timing(progresso, {
       toValue: 1,
       duration: 280,
       delay: Math.min(indice * RITARDO_PER_ELEMENTO, RITARDO_MASSIMO),
       useNativeDriver: true,
     }).start();
-  }, [progresso, indice]);
+    // L'animazione parte solo alla comparsa: indice e animata iniziali bastano
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [progresso]);
 
   const translateY = progresso.interpolate({ inputRange: [0, 1], outputRange: [12, 0] });
 

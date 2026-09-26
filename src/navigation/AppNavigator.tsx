@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, TouchableOpacity, StatusBar, StyleSheet } from 'react-native';
+import { Pressable, StatusBar, StyleSheet } from 'react-native';
 import {
   NavigationContainer,
   DefaultTheme,
@@ -11,7 +11,7 @@ import {
   createBottomTabNavigator,
   type BottomTabBarButtonProps,
 } from '@react-navigation/bottom-tabs';
-import { MapPin, Heart, Sun, Moon, CircleUser } from 'lucide-react-native';
+import { MapPin, Heart, CircleUser } from 'lucide-react-native';
 
 import PiattiRegioneScreen from '../screens/PiattiRegioneScreen';
 import DettaglioPiattoScreen from '../screens/DettaglioPiattoScreen';
@@ -21,6 +21,7 @@ import MappaItaliaScreen from '../screens/MappaItaliaScreen';
 import ProfiloScreen from '../screens/ProfiloScreen';
 import ProvinciaScreen from '../screens/ProvinciaScreen';
 import LoginScreen from '../screens/LoginScreen';
+import BottoneTema from '../components/BottoneTema';
 import { useTheme } from '../theme/ThemeContext';
 import { font } from '../theme/tipografia';
 import type { ColorPalette } from '../theme/colors';
@@ -65,20 +66,7 @@ const iconaProfilo = ({ color, size }: IconaTabProps) => (
   <CircleUser color={color} size={size} />
 );
 
-function ThemeToggleButton() {
-  const { mode, colors, toggleTheme } = useTheme();
-  return (
-    <TouchableOpacity onPress={toggleTheme} style={styles.bottoneTema} hitSlop={8}>
-      {mode === 'light' ? (
-        <Moon color={colors.textPrimary} size={22} />
-      ) : (
-        <Sun color={colors.textPrimary} size={22} />
-      )}
-    </TouchableOpacity>
-  );
-}
-
-const headerTema = () => <ThemeToggleButton />;
+const headerTema = () => <BottoneTema style={styles.bottoneTema} />;
 
 function TabBarButton(props: BottomTabBarButtonProps) {
   const { colors } = useTheme();
@@ -130,7 +118,7 @@ function RegioniStackNavigator() {
       <RegioniStack.Screen
         name="Regioni"
         component={RegioniScreen}
-        options={{ title: 'Forklore' }}
+        options={{ title: 'Forklore', headerShown: false }}
       />
       <RegioniStack.Screen
         name="Mappa"
@@ -140,17 +128,17 @@ function RegioniStackNavigator() {
       <RegioniStack.Screen
         name="Provincia"
         component={ProvinciaScreen}
-        options={{ title: 'Provincia' }}
+        options={{ title: '' }}
       />
       <RegioniStack.Screen
         name="PiattiRegione"
         component={PiattiRegioneScreen}
-        options={{ title: 'Piatti tipici' }}
+        options={{ title: '' }}
       />
       <RegioniStack.Screen
         name="DettaglioPiatto"
         component={DettaglioPiattoScreen}
-        options={{ title: 'Dettaglio' }}
+        options={{ title: '' }}
       />
     </RegioniStack.Navigator>
   );
@@ -168,7 +156,7 @@ function PreferitiStackNavigator() {
       <PreferitiStack.Screen
         name="DettaglioPiatto"
         component={DettaglioPiattoScreen}
-        options={{ title: 'Dettaglio' }}
+        options={{ title: '' }}
       />
     </PreferitiStack.Navigator>
   );

@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
@@ -23,12 +23,6 @@ export default function ProvinciaScreen() {
 
   const regione = REGIONI.find((r) => r.id === regioneId);
   const provincia = getProvince(regioneId).find((p) => p.id === provinciaId);
-
-  useLayoutEffect(() => {
-    if (provincia) {
-      navigation.setOptions({ title: `Provincia di ${provincia.nome}` });
-    }
-  }, [navigation, provincia]);
 
   useFocusEffect(
     useCallback(() => {
