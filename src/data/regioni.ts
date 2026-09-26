@@ -36,3 +36,34 @@ export function getPiattoDelGiorno(data: Date = new Date()): PiattoConRegione {
   );
   return TUTTI_I_PIATTI[(giorno * 7919) % TUTTI_I_PIATTI.length];
 }
+
+// Alcuni piatti compaiono in più regioni: questo è il numero di nomi distinti
+export const NUMERO_PIATTI_UNICI = new Set(TUTTI_I_PIATTI.map((p) => p.nome)).size;
+
+const ACCENTI: Record<string, string> = {
+  à: 'a', á: 'a', â: 'a', ä: 'a',
+  è: 'e', é: 'e', ê: 'e', ë: 'e',
+  ì: 'i', í: 'i', î: 'i', ï: 'i',
+  ò: 'o', ó: 'o', ô: 'o', ö: 'o',
+  ù: 'u', ú: 'u', û: 'u', ü: 'u',
+};
+
+// Minuscolo e senza accenti, così "Babà" e "baba" coincidono
+function normalizza(testo: string): string {
+  return testo
+    .toLowerCase()
+    .replace(/[àáâäèéêëìíîïòóôöùúûü]/g, (c) => ACCENTI[c] ?? c)
+    .replace(/[’`]/g, "'")
+    .trim();
+}
+
+// Cerca per nome del piatto o per nome della regione
+export function cercaPiatti(testo: string): PiattoConRegione[] {
+  const cercato = normalizza(testo);
+  if (!cercato) {
+    return [];
+  }
+  return TUTTI_I_PIATTI.filter(
+    (p) => normalizza(p.nome).includes(cercato) || normalizza(p.regioneNome).includes(cercato),
+  );
+}
