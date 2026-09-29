@@ -8,7 +8,6 @@ export type Piatto = {
 export type Regione = {
   id: string;
   nome: string;
-  // Categoria di Wikipedia da cui caricare gli "altri piatti" della regione
   categoria: string;
   piatti: Piatto[];
 };
@@ -34,7 +33,6 @@ const PROVINCE: Record<string, Provincia[]> = Object.fromEntries(
   ]),
 );
 
-// Per ora solo la Toscana ha le province: per le altre regioni la lista è vuota
 export function getProvince(regioneId: string): Provincia[] {
   return PROVINCE[regioneId] ?? [];
 }
@@ -60,7 +58,6 @@ export function getPiattoDelGiorno(data: Date = new Date()): PiattoConRegione {
   return TUTTI_I_PIATTI[(giorno * 7919) % TUTTI_I_PIATTI.length];
 }
 
-// Alcuni piatti compaiono in più regioni: questo è il numero di nomi distinti
 export const NUMERO_PIATTI_UNICI = new Set(TUTTI_I_PIATTI.map((p) => p.nome)).size;
 
 const ACCENTI: Record<string, string> = {
@@ -71,7 +68,6 @@ const ACCENTI: Record<string, string> = {
   ù: 'u', ú: 'u', û: 'u', ü: 'u',
 };
 
-// Minuscolo e senza accenti, così "Babà" e "baba" coincidono
 function normalizza(testo: string): string {
   return testo
     .toLowerCase()
@@ -80,7 +76,6 @@ function normalizza(testo: string): string {
     .trim();
 }
 
-// Cerca per nome del piatto o per nome della regione
 export function cercaPiatti(testo: string): PiattoConRegione[] {
   const cercato = normalizza(testo);
   if (!cercato) {
@@ -91,13 +86,10 @@ export function cercaPiatti(testo: string): PiattoConRegione[] {
   );
 }
 
-// Nome da mostrare: senza la precisazione tra parentesi dei titoli di Wikipedia
-// (es. "Jota (gastronomia)" → "Jota"). I dati restano il titolo esatto della pagina.
 export function nomeVisibile(titolo: string): string {
   return titolo.replace(/\s*\([^)]*\)$/, '');
 }
 
-// Regione di un piatto cercandolo tra i piatti tipici e quelli delle province
 export function trovaRegioneDelPiatto(nome: string): Regione | undefined {
   const tipico = TUTTI_I_PIATTI.find((p) => p.nome === nome);
   const regioneId =

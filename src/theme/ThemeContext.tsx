@@ -8,7 +8,6 @@ const CHIAVE_TEMA = 'tema';
 
 type ThemeMode = 'light' | 'dark';
 
-// 'system' segue il tema impostato sul telefono
 export type PreferenzaTema = ThemeMode | 'system';
 
 type ThemeContextValue = {

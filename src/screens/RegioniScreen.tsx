@@ -30,7 +30,6 @@ type NavigationProp = NativeStackNavigationProp<RegioniStackParamList, 'Regioni'
 
 const NUMERO_SUGGERITE = 4;
 
-// Regioni da cui iniziare: quella del piatto del giorno, poi le successive non ancora iniziate
 function regioniSuggerite(progresso: Record<string, number>): Regione[] {
   const partenza = REGIONI.findIndex((r) => r.id === getPiattoDelGiorno().regioneId);
   const inOrdine = [...REGIONI.slice(partenza), ...REGIONI.slice(0, partenza)];
@@ -43,7 +42,6 @@ function dataDiOggi(): string {
     day: 'numeric',
     month: 'long',
   });
-  // Solo l'iniziale maiuscola: "Sabato 26 settembre"
   return data.charAt(0).toUpperCase() + data.slice(1).toLowerCase();
 }
 
@@ -55,7 +53,6 @@ export default function RegioniScreen() {
   const [ricerca, setRicerca] = useState('');
   const [visti, setVisti] = useState<string[]>([]);
 
-  // Le card montate dopo la prima apertura (scorrendo) compaiono subito, senza animazione
   const primaApertura = useRef(true);
   useEffect(() => {
     primaApertura.current = false;
@@ -64,7 +61,6 @@ export default function RegioniScreen() {
   useFocusEffect(
     useCallback(() => {
       const nuovi = getVisti();
-      // Se non è cambiato niente teniamo lo stesso array: nessun ricalcolo né ridisegno
       setVisti((attuali) => (attuali.join('|') === nuovi.join('|') ? attuali : nuovi));
     }, []),
   );
@@ -74,7 +70,6 @@ export default function RegioniScreen() {
   const staCercando = ricerca.trim().length > 0;
   const risultati = staCercando ? cercaPiatti(ricerca) : [];
 
-  // Regioni iniziate ma non ancora conquistate, dalla più avanti
   const inCorso = useMemo(
     () =>
       REGIONI.filter((r) => progresso[r.id] > 0 && progresso[r.id] < 1).sort(
@@ -82,7 +77,6 @@ export default function RegioniScreen() {
       ),
     [progresso],
   );
-  // Le regioni in corso per prime, poi i suggerimenti fino ad avere almeno 4 card
   const carosello = [...inCorso, ...regioniSuggerite(progresso)].slice(
     0,
     Math.max(inCorso.length, NUMERO_SUGGERITE),
@@ -136,7 +130,6 @@ export default function RegioniScreen() {
         {inCorso.length > 0 ? 'Continua a esplorare' : 'Da dove iniziare'}
       </Text>
       <ScrollView
-        // Se cambiano le regioni (es. dopo un reset) il carosello riparte dall'inizio
         key={carosello.map((r) => r.id).join()}
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -275,7 +268,6 @@ const styles = StyleSheet.create({
   titoloSezione: {
     marginBottom: 12,
   },
-  // Il carosello esce dai margini della lista per scorrere fino al bordo dello schermo
   carosello: {
     marginHorizontal: -16,
     marginBottom: 24,

@@ -2,7 +2,6 @@ import { queryOptions } from '@tanstack/react-query';
 import { WIKIPEDIA_USER_AGENT } from './wikipedia';
 import { nomeVisibile } from './regioni';
 
-// Le ricette vengono dal "Libro di cucina" di Wikibooks (stessa licenza di Wikipedia)
 const PREFISSO_RICETTE = 'Libro di cucina/Ricette/';
 
 export type Ricetta = {
@@ -13,7 +12,6 @@ export type Ricetta = {
   url: string;
 };
 
-// Toglie la sintassi wiki da una riga: note, template, link, grassetti, tag HTML
 function pulisci(testo: string): string {
   return testo
     .replace(/<ref[^>]*\/>/g, '')
@@ -27,14 +25,11 @@ function pulisci(testo: string): string {
     .trim();
 }
 
-// Livello di un titolo wiki: "== Titolo ==" → 2, "=== Titolo ===" → 3, riga normale → 0
 function livelloTitolo(riga: string): number {
   const titolo = riga.trim().match(/^(={2,6})[^=].*?\1$/);
   return titolo ? titolo[1].length : 0;
 }
 
-// Righe della prima sezione il cui titolo corrisponde a `nome`, di qualsiasi livello.
-// Finisce al titolo successivo dello stesso livello o superiore (le sottosezioni restano dentro).
 function sezione(wikitext: string, nome: RegExp): string[] {
   const righe = wikitext.split('\n');
   const inizio = righe.findIndex((r) => livelloTitolo(r) > 0 && nome.test(r));
@@ -49,14 +44,12 @@ function sezione(wikitext: string, nome: RegExp): string[] {
   return righe.slice(inizio + 1, fine === -1 ? undefined : fine);
 }
 
-// Passaggi della preparazione: le righe numerate (#) o, se mancano, i paragrafi di testo
 function leggiPassaggi(righe: string[]): string[] {
   const numerati = righe.filter((r) => r.trim().startsWith('#'));
   const sorgente = numerati.length > 0 ? numerati : righe.filter((r) => /^[^=*#{|[\s]/.test(r));
   return sorgente.map((r) => pulisci(r.replace(/^\s*#+/, ''))).filter(Boolean);
 }
 
-// Estrae ingredienti e passaggi dal wikitesto di una ricetta. null se non ci sono.
 export function leggiRicetta(
   wikitext: string,
 ): Omit<Ricetta, 'titolo' | 'url'> | null {
@@ -97,7 +90,6 @@ export async function fetchRicetta(nomePiatto: string): Promise<Ricetta | null> 
   }
   const data = await response.json();
 
-  // La maggior parte dei piatti non ha una ricetta su Wikibooks: non è un errore
   if (data.error?.code === 'missingtitle') {
     return null;
   }
@@ -113,7 +105,6 @@ export async function fetchRicetta(nomePiatto: string): Promise<Ricetta | null> 
   return {
     ...contenuto,
     titolo: titolo.replace(PREFISSO_RICETTE, ''),
-    // encodeURI e non encodeURIComponent: le "/" del titolo devono restare tali
     url: `https://it.wikibooks.org/wiki/${encodeURI(titolo.replace(/ /g, '_'))}`,
   };
 }

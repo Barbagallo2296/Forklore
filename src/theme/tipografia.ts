@@ -1,7 +1,5 @@
 import type { TextStyle } from 'react-native';
 
-// Nomi dei file in assets/fonts. Con i font personalizzati ogni peso è una
-// famiglia a sé: si sceglie il file giusto invece di usare fontWeight.
 export const font = {
   titolo: 'PlayfairDisplay-Bold',
   regular: 'Nunito-Regular',

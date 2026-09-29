@@ -37,7 +37,6 @@ export default function PiattoDelGiorno() {
         </View>
       )}
 
-      {/* Sfumatura scura in basso per rendere leggibile il testo sopra la foto */}
       <Sfumatura />
 
       <View style={[styles.etichetta, { backgroundColor: colors.primary }]}>

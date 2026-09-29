@@ -5,7 +5,6 @@ import { useTheme } from '../theme/ThemeContext';
 type Props = {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
-  // Se presente la card diventa toccabile
   onPress?: () => void;
 };
 
@@ -17,7 +16,6 @@ export const ombra = {
   elevation: 2,
 };
 
-// Superficie base dell'app: sfondo card, angoli arrotondati e ombra leggera
 export default function Card({ children, style, onPress }: Props) {
   const { colors } = useTheme();
   const stile = [styles.card, { backgroundColor: colors.card }, style];

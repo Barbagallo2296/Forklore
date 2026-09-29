@@ -9,8 +9,6 @@ type Props = {
   nomePiatto: string;
 };
 
-// Link esterni: nessuna chiave API né permesso di posizione. Google Maps usa da solo
-// la posizione del telefono, GialloZafferano mostra le sue ricette per quel piatto.
 function urlRistoranti(nome: string): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`ristorante ${nome}`)}`;
 }

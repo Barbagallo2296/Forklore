@@ -11,7 +11,6 @@ import { font, testo } from '../theme/tipografia';
 
 type Props = {
   nome: string;
-  // Mostrata sotto il nome (utile nelle liste con piatti di regioni diverse)
   regione?: string;
   visto?: boolean;
   onPress: () => void;

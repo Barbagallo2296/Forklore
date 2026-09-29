@@ -40,16 +40,6 @@ L'app include ricerca, preferiti, profilo con statistiche e traguardi, tema chia
   - pulsante **"Azzera progressi"** (con conferma) e uscita.
 - Preferiti, progressi, nome e tema sono salvati sul telefono e restano anche chiudendo l'app o senza connessione.
 
-## Requisiti del corso: dove trovarli
-
-| Requisito | Dove |
-|---|---|
-| `useState`, `useEffect` | In tutte le schermate, ad esempio [`DettaglioPiattoScreen.tsx`](src/screens/DettaglioPiattoScreen.tsx) (preferito, segna il piatto come visto) e [`MappaItaliaScreen.tsx`](src/screens/MappaItaliaScreen.tsx) (regione selezionata, zoom) |
-| React Navigation (più screen) | [`AppNavigator.tsx`](src/navigation/AppNavigator.tsx): stack radice (Login / App), bottom tab (Regioni, Preferiti, Profilo) e uno stack per ogni tab |
-| `useContext` | Due Context: [`ThemeContext.tsx`](src/theme/ThemeContext.tsx) (tema chiaro/scuro/sistema) e [`UtenteContext.tsx`](src/utente/UtenteContext.tsx) (login simulato) |
-| Stile curato | Palette e font personalizzati ([`src/theme/`](src/theme/)), componenti riutilizzabili ([`src/components/`](src/components/)), icone [Lucide](https://lucide.dev/), animazioni |
-| Backend di terze parti | API di **Wikipedia** ([`wikipedia.ts`](src/data/wikipedia.ts)) per testi, foto e categorie, e di **Wikibooks** ([`ricette.ts`](src/data/ricette.ts)) per le ricette |
-
 ## Stack tecnico
 
 - **React Native** 0.87 + **TypeScript**
@@ -68,7 +58,7 @@ L'app è stata sviluppata e provata su **Android**.
 
 ### Prerequisiti
 
-- [Node.js](https://nodejs.org/) **22.11 o successivo** (richiesto dal campo `engines` di `package.json`)
+- [Node.js](https://nodejs.org/) **22.11 o successivo**
 - **JDK 17**
 - **Android Studio** con Android SDK installato
 - Uno smartphone Android con **debug USB attivo**, oppure un emulatore Android avviato da Android Studio
@@ -98,7 +88,7 @@ npm start
 npx react-native run-android
 ```
 
-In questa modalità l'app legge il codice da Metro: il PC deve restare acceso e collegato, e ogni modifica al codice si vede subito.
+In questa modalità l'app legge il codice da Metro: il PC deve restare acceso e collegato.
 
 ### Installare l'app sul telefono (versione release)
 
@@ -110,7 +100,7 @@ cd android
 adb install -r app/build/outputs/apk/release/app-release.apk
 ```
 
-La release è firmata con la chiave di debug del template di React Native: va bene per provarla e distribuirla a mano, non per il Play Store. Per tornare a sviluppare basta rilanciare `npx react-native run-android`.
+L'APK è firmato con la chiave di debug del template: va bene per installarlo a mano, per pubblicarlo su uno store serve una chiave propria ([guida](https://reactnative.dev/docs/signed-apk-android)). Per tornare a sviluppare basta rilanciare `npx react-native run-android`.
 
 ### Dati da inserire
 
@@ -173,12 +163,7 @@ Le ricette vengono cercate su Wikibooks alla pagina `Libro di cucina/Ricette/<no
 
 ## Font personalizzati
 
-I file `.ttf` sono in [`assets/fonts/`](assets/fonts/) e sono collegati al progetto nativo con [react-native-asset](https://github.com/unimonkiez/react-native-asset) (configurazione in [`react-native.config.js`](react-native.config.js)). Sono già collegati nel repo, quindi non devi fare nulla. Se aggiungi o sostituisci un font:
-
-```bash
-npx react-native-asset
-npx react-native run-android   # i font sono file nativi: serve una nuova build, non basta ricaricare Metro
-```
+I font (Playfair Display e Nunito) sono in [`assets/fonts/`](assets/fonts/) e sono già collegati al progetto Android: dopo il clone non serve fare nulla. Se li cambi, lancia `npx react-native-asset` e rifai la build con `npx react-native run-android`: i font sono file nativi e ricaricare Metro non basta.
 
 ## Risoluzione problemi
 
@@ -207,7 +192,9 @@ src/
     AnteprimaRegione.tsx          scheda che sale dal basso sulla mappa
     RicettaCard.tsx               ricetta da Wikibooks
     AzioniPiatto.tsx              pulsanti "Dove mangiarlo" e "Cerca la ricetta"
-    …                             Card, RigaPiatto, SagomaRegione, Sfumatura, Skeleton…
+    …                             AnteprimaMappa, BottoneTema, Card, CardProvincia, ComparsaAnimata,
+                                  ImmagineDissolvenza, InfoRegione, PiattoDelGiorno, RigaPiatto,
+                                  SagomaRegione, Sfumatura, Skeleton, StatoVuoto
   navigation/AppNavigator.tsx   stack e tab di React Navigation
   data/
     regioni-data.json             regioni, categorie Wikipedia e 10 piatti tipici per regione
@@ -226,6 +213,8 @@ assets/fonts/                   font Playfair Display e Nunito
 docs/screenshots/               screenshot usati in questo README
 verifica-piatti.js              verifica dei piatti su Wikipedia
 __tests__/                      test Jest
+jest.setup.js                   simulazione dei moduli nativi per i test
+react-native.config.js          collegamento dei font al progetto nativo
 ```
 
 ## Sviluppi futuri

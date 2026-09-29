@@ -5,11 +5,9 @@ import { useTheme } from '../theme/ThemeContext';
 
 type Props = {
   uri: string;
-  // Dimensioni e bordi dell'immagine
   style?: StyleProp<ViewStyle>;
 };
 
-// Immagine di Wikipedia che compare in dissolvenza quando ha finito di caricare
 export default function ImmagineDissolvenza({ uri, style }: Props) {
   const { colors } = useTheme();
   const opacita = useRef(new Animated.Value(0)).current;

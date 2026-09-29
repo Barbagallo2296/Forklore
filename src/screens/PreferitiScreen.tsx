@@ -15,8 +15,6 @@ type NavigationProp = NativeStackNavigationProp<PreferitiStackParamList, 'Dettag
 
 type Preferito = { nome: string; regioneId?: string; regioneNome?: string };
 
-// Tutti i preferiti, anche quelli di provincia o presi dagli "altri piatti" di Wikipedia.
-// I più recenti in cima.
 function caricaPreferiti(): Preferito[] {
   const regioniSalvate = getRegioniPreferiti();
   return getPreferiti()

@@ -5,15 +5,12 @@ import { useTheme } from '../theme/ThemeContext';
 
 type Props = {
   regioneId: string;
-  // Percentuale di piatti scoperti (da 0 a 1): più è alta, più la sagoma è piena
   progresso: number;
   size?: number;
 };
 
 type Sagoma = { d: string; viewBox: string; tratto: number };
 
-// I path contengono solo coordinate assolute (M/L), quindi il riquadro che
-// contiene la regione si ricava prendendo i valori minimi e massimi.
 function calcolaSagoma(d: string): Sagoma {
   const numeri = (d.match(/-?\d+(\.\d+)?/g) ?? []).map(Number);
   const xs = numeri.filter((_, i) => i % 2 === 0);
@@ -22,7 +19,6 @@ function calcolaSagoma(d: string): Sagoma {
   const minY = Math.min(...ys);
   const larghezza = Math.max(...xs) - minX;
   const altezza = Math.max(...ys) - minY;
-  // Riquadro quadrato con la regione centrata
   const lato = Math.max(larghezza, altezza);
   const margine = lato * 0.08;
   const x = minX - (lato - larghezza) / 2 - margine;

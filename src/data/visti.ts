@@ -21,13 +21,10 @@ export function azzeraVisti(): void {
 
 const NOMI_CURATI = new Set(TUTTI_I_PIATTI.map((p) => p.nome));
 
-// Solo i piatti tipici scelti per ogni regione: quelli caricati da Wikipedia
-// o delle province non contano per statistiche e traguardi
 export function filtraCurati(visti: string[]): string[] {
   return visti.filter((nome) => NOMI_CURATI.has(nome));
 }
 
-// Percentuale di piatti visti per ogni regione (da 0 a 1)
 export function calcolaProgresso(visti: string[]): Record<string, number> {
   const risultato: Record<string, number> = {};
   for (const regione of REGIONI) {

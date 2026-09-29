@@ -25,7 +25,6 @@ const SUD = [
   'basilicata', 'calabria', 'sicilia', 'sardegna',
 ];
 
-// true se l'utente ha aperto almeno un piatto in ognuna delle regioni indicate
 function haEsplorato(regioni: string[], progresso: Record<string, number>) {
   return regioni.every((id) => (progresso[id] ?? 0) > 0);
 }

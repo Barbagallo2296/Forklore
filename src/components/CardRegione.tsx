@@ -20,17 +20,12 @@ import type { Regione } from '../data/regioni';
 
 type Props = {
   regione: Regione;
-  // Percentuale di piatti scoperti (da 0 a 1)
   progresso: number;
-  // Riceve l'id della regione: così chi usa la card può passare sempre la stessa funzione
   onPress: (regioneId: string) => void;
-  // Versione più piccola, per il carosello
   compatta?: boolean;
   style?: StyleProp<ViewStyle>;
 };
 
-// Card di una regione con la foto del suo primo piatto tipico come sfondo.
-// memo: la home ne mostra 20 e non serve ridisegnarle se progresso e tema non cambiano
 function CardRegione({ regione, progresso, onPress, compatta = false, style }: Props) {
   const { colors } = useTheme();
   const { data } = useQuery(wikipediaQuery(regione.piatti[0].nome));
@@ -57,7 +52,6 @@ function CardRegione({ regione, progresso, onPress, compatta = false, style }: P
           <Sfumatura inizio={0.3} intensita={0.8} />
         </>
       ) : (
-        // Senza foto (caricamento o pagina senza immagine) resta la sagoma grande
         <View style={[StyleSheet.absoluteFill, styles.segnaposto]}>
           <SagomaRegione regioneId={regione.id} progresso={progresso} size={compatta ? 56 : 72} />
         </View>

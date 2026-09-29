@@ -1,7 +1,3 @@
-/**
- * @format
- */
-
 import React from 'react';
 import ReactTestRenderer from 'react-test-renderer';
 import App, { queryClient } from '../App';
@@ -10,8 +6,6 @@ import { calcolaProgresso, contaConquistate, filtraCurati } from '../src/data/vi
 import { filtraPiatti } from '../src/data/wikipedia';
 import { leggiRicetta } from '../src/data/ricette';
 
-// TanStack Query pianifica la pulizia della cache con un timer reale di 5 minuti
-// che terrebbe Jest aperto: nei test la disattiviamo (gcTime infinito)
 beforeAll(() => {
   queryClient.setDefaultOptions({ queries: { gcTime: Infinity, retry: false } });
 });
@@ -19,7 +13,6 @@ afterAll(() => {
   queryClient.clear();
 });
 
-// Tutti i testi visibili, uniti in una stringa
 function testi(renderer: ReactTestRenderer.ReactTestRenderer): string {
   return renderer.root
     .findAll((n) => (n.type as unknown) === 'Text')

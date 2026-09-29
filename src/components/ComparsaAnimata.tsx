@@ -3,9 +3,7 @@ import { Animated, type StyleProp, type ViewStyle } from 'react-native';
 
 type Props = {
   children: React.ReactNode;
-  // Posizione nella lista: gli elementi compaiono uno dopo l'altro
   indice?: number;
-  // false = compare subito, senza animazione (es. card rimontate durante lo scroll)
   animata?: boolean;
   style?: StyleProp<ViewStyle>;
 };
@@ -26,9 +24,7 @@ export default function ComparsaAnimata({ children, indice = 0, animata = true, 
       delay: Math.min(indice * RITARDO_PER_ELEMENTO, RITARDO_MASSIMO),
       useNativeDriver: true,
     }).start();
-    // L'animazione parte solo alla comparsa: indice e animata iniziali bastano
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [progresso]);
+  }, [progresso, indice, animata]);
 
   const translateY = progresso.interpolate({ inputRange: [0, 1], outputRange: [12, 0] });
 

@@ -54,10 +54,8 @@ export default function DettaglioPiattoScreen() {
   }, [piattoNome]);
 
   const { data, isLoading, isError } = useQuery(wikipediaQuery(piattoNome));
-  // Stessa query della RicettaCard: qui serve solo per il link nella condivisione
   const { data: ricetta } = useQuery(ricettaQuery(piattoNome));
 
-  // I piatti fuori dai 10 tipici (province, altri da Wikipedia) arrivano con regioneId
   const regioneDaParametri =
     REGIONI.find((r) => r.id === regioneId) ?? trovaRegioneDelPiatto(piattoNome);
   const piattoInfo =
@@ -313,7 +311,6 @@ const styles = StyleSheet.create({
   heroSegnapostoEmoji: {
     fontSize: 64,
   },
-  // I bottoni stanno a cavallo del bordo inferiore dell'immagine
   azioni: {
     position: 'absolute',
     right: 20,

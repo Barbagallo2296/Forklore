@@ -15,8 +15,6 @@ type Props = {
   onPress: () => void;
 };
 
-// Card "La tua Italia": mappa in miniatura colorata con i progressi, apre la mappa completa
-// memo: la mappa ha 20 tracciati SVG, la ridisegniamo solo quando cambiano i progressi
 function AnteprimaMappa({ progresso, piattiScoperti, onPress }: Props) {
   const { colors } = useTheme();
   const conquistate = contaConquistate(progresso);

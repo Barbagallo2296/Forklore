@@ -14,7 +14,6 @@ type Props = {
 
 const RIGHE_SKELETON = ['60%', '80%', '70%', '90%'] as const;
 
-// Ricetta dal Libro di cucina di Wikibooks. Se il piatto non ce l'ha, non mostra nulla.
 export default function RicettaCard({ nomePiatto }: Props) {
   const { colors } = useTheme();
   const { data: ricetta, isLoading } = useQuery(ricettaQuery(nomePiatto));

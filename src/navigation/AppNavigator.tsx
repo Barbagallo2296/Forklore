@@ -27,7 +27,6 @@ import { font } from '../theme/tipografia';
 import type { ColorPalette } from '../theme/colors';
 import { useUtente } from '../utente/UtenteContext';
 
-// regioneId serve per i piatti non tra i 10 tipici (province, altri piatti da Wikipedia)
 type DettaglioParams = { piattoNome: string; regioneId?: string };
 
 export type RegioniStackParamList = {
@@ -77,7 +76,6 @@ function TabBarButton(props: BottomTabBarButtonProps) {
 
 const tabBarButton = (props: BottomTabBarButtonProps) => <TabBarButton {...props} />;
 
-// Stile comune degli header di tutti gli stack: stesso colore dello sfondo, titolo serif
 function useOpzioniHeader() {
   const { colors } = useTheme();
   return {
@@ -88,7 +86,6 @@ function useOpzioniHeader() {
   };
 }
 
-// Tema di React Navigation allineato alla nostra palette (sfondi, tab bar, font)
 function creaTemaNavigazione(mode: 'light' | 'dark', colors: ColorPalette): Theme {
   const base = mode === 'dark' ? DarkTheme : DefaultTheme;
   return {

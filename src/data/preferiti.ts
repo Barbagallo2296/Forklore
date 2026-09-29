@@ -3,7 +3,6 @@ import { createMMKV } from 'react-native-mmkv';
 export const storage = createMMKV();
 
 const CHIAVE_PREFERITI = 'preferiti';
-// Regione di ogni preferito: serve per i piatti fuori dai 10 tipici (province, altri da Wikipedia)
 const CHIAVE_REGIONI_PREFERITI = 'preferiti-regioni';
 
 export function getPreferiti(): string[] {

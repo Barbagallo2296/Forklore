@@ -12,7 +12,6 @@ async function verificaPiatto(nome) {
     if (response.status !== 200) {
       return { nome, ok: false, status: response.status };
     }
-    // Una pagina di disambiguazione esiste ma non descrive il piatto (es. "Schiacciata")
     const pagina = await response.json();
     if (pagina.type === 'disambiguation') {
       return { nome, ok: false, status: 'pagina di disambiguazione' };
@@ -27,7 +26,6 @@ async function main() {
   const fallimenti = [];
   let totale = 0;
 
-  // Regioni e, dove ci sono, le loro province: stessa verifica per entrambe
   const gruppi = [
     ...REGIONI.map((r) => ({ nome: r.nome, piatti: r.piatti })),
     ...Object.values(PROVINCE)

@@ -27,7 +27,6 @@ import type { RegioniStackParamList } from '../navigation/AppNavigator';
 type NavigationProp = NativeStackNavigationProp<RegioniStackParamList, 'PiattiRegione'>;
 type RoutePropType = RouteProp<RegioniStackParamList, 'PiattiRegione'>;
 
-// Una riga della SectionList: un piatto, oppure la fila orizzontale delle province
 type Elemento = { tipo: 'piatto'; nome: string; extra: boolean } | { tipo: 'province' };
 type Sezione = { chiave: 'tipici' | 'province' | 'altri'; data: Elemento[] };
 
@@ -67,7 +66,6 @@ export default function PiattiRegioneScreen() {
     );
   }
 
-  // Non ripetere negli "altri piatti" quelli già presenti tra i tipici o nelle province
   const esclusi = new Set([
     ...TUTTI_I_PIATTI.map((p) => p.nome),
     ...province.flatMap((p) => p.piatti.map((piatto) => piatto.nome)),
@@ -235,7 +233,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: 2,
   },
-  // Il carosello delle province arriva fino ai bordi dello schermo
   province: {
     marginHorizontal: -16,
   },

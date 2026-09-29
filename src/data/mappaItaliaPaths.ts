@@ -1,5 +1,3 @@
-// Tracciati SVG generati da dati geografici ufficiali ISTAT
-// (github.com/guglielmo/geojson-italy, licenza CC-BY), semplificati e proiettati.
 export const MAPPA_VIEWBOX = '0 0 500 620';
 
 export type RegionePath = {

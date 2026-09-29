@@ -37,8 +37,6 @@ export async function fetchWikipediaSummary(
 
   const data = await response.json();
 
-  // Alcune pagine hanno come immagine un segnaposto ("Nessuna immagine disponibile"):
-  // meglio non mostrarla e usare il nostro
   const segnaposto = IMMAGINI_SEGNAPOSTO.test(data.thumbnail?.source ?? '');
 
   return {
@@ -59,12 +57,8 @@ export function wikipediaQuery(titoloPagina: string) {
   });
 }
 
-// Larghezze standard di Wikimedia: 960 per le foto a tutto schermo, 500 per le card
 export type LarghezzaImmagine = 500 | 960;
 
-// URL di un'immagine abbastanza grande per occupare tutta la larghezza dello schermo.
-// Wikimedia genera miniature solo in alcune larghezze standard (tra cui 500 e 960px):
-// si parte dalla miniatura e si cambia la larghezza nell'URL.
 export function immagineHero(
   summary: WikipediaSummary,
   larghezza: LarghezzaImmagine = 960,
@@ -84,8 +78,6 @@ export type PaginaCategoria = {
   description?: string;
 };
 
-// Tutte le pagine di una categoria (es. "Cucina toscana") con la loro breve descrizione.
-// Una sola richiesta: le categorie regionali hanno al massimo qualche centinaio di voci.
 export async function fetchCategoria(categoria: string): Promise<PaginaCategoria[]> {
   const parametri = new URLSearchParams({
     action: 'query',
@@ -114,11 +106,9 @@ export function categoriaQuery(categoria: string) {
   });
 }
 
-// Voci delle categorie di cucina che non sono piatti: vini, oli, liquori, elenchi, persone...
 const NON_PIATTI =
   /\(olio|olio (d'oliva|extra|agrumato)|\bvin[oi]\b|\(vino\)|denominazione di origine controllata|\bDOCG?\b|liquor|\bbirr|lista di|prodotti agroalimentari|\barti (minori|maggiori)\b|corporazion|ristorant|cuoc[oa]\b|\bchef\b|aziend/i;
 
-// Tiene solo le voci che sembrano piatti, escludendo quelli già mostrati altrove
 export function filtraPiatti(pagine: PaginaCategoria[], esclusi: Set<string>): string[] {
   return pagine
     .filter((p) => !p.title.startsWith('Cucina '))

@@ -4,7 +4,6 @@ import { createMMKV } from 'react-native-mmkv';
 const storage = createMMKV();
 const CHIAVE_UTENTE = 'utente';
 
-// Login simulato: basta un nome, salvato in locale. Nessuna password o backend.
 type UtenteContextValue = {
   nome: string | null;
   accedi: (nome: string) => void;

@@ -59,7 +59,6 @@ export default function MappaItaliaScreen() {
     }, []),
   );
 
-  // Con un'anteprima aperta, il tasto indietro di Android chiude prima quella
   useFocusEffect(
     useCallback(() => {
       const sottoscrizione = BackHandler.addEventListener(
@@ -76,13 +75,11 @@ export default function MappaItaliaScreen() {
     }, [selezionata]),
   );
 
-  // Percentuale di piatti visti per ogni regione (da 0 a 1)
   const progresso = useMemo(() => calcolaProgresso(visti), [visti]);
   const conquistate = contaConquistate(progresso);
   const piattiScoperti = filtraCurati(visti).length;
   const regioneSelezionata = REGIONI.find(r => r.id === selezionata);
 
-  // --- Zoom e spostamento ---
   const scala = useRef(new Animated.Value(1)).current;
   const trasla = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   const dimensioni = useRef({ larghezza: 0, altezza: 0 });
@@ -187,14 +184,12 @@ export default function MappaItaliaScreen() {
     { etichetta: 'Conquistata', stile: { backgroundColor: colors.primary } },
   ];
 
-  // Nomi da mostrare sulla mappa: tutti quando è ingrandita, altrimenti solo quello selezionato
   const nomiVisibili = REGIONI_PATHS.filter(
     r => mostraNomi || r.id === selezionata,
   );
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Con un'anteprima aperta la card dei progressi lascia spazio alla mappa */}
       {!regioneSelezionata && (
         <Card style={styles.progressi}>
           <View style={styles.numeri}>
@@ -281,7 +276,6 @@ export default function MappaItaliaScreen() {
           ]}
         >
           <Svg viewBox={MAPPA_VIEWBOX} width="100%" height="100%">
-            {/* Il "mare": toccarlo chiude l'anteprima */}
             <Rect
               x={0}
               y={0}

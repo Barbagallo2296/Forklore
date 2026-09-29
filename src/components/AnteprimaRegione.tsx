@@ -53,7 +53,6 @@ function MiniaturaPiatto({
   );
 }
 
-// Scheda che sale dal basso quando si tocca una regione sulla mappa
 export default function AnteprimaRegione({
   regione,
   visti,
@@ -143,7 +142,6 @@ export default function AnteprimaRegione({
 }
 
 const styles = StyleSheet.create({
-  // Sta sotto la mappa (non sopra): la mappa si rimpicciolisce e resta tutta visibile
   scheda: {
     marginTop: 8,
     marginBottom: 12,

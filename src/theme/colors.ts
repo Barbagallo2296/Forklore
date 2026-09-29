@@ -1,4 +1,3 @@
-// Palette "trattoria": terracotta e verde oliva su fondo crema (chiaro) o legno scuro (scuro)
 export type ColorPalette = {
   primary: string;
   primaryLight: string;
